@@ -1,0 +1,14 @@
+{
+  "name": "@demo/ui-vue",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "@ark-ui/vue": "^5.37.2",
+    "@demo/ui-core": "*"
+  },
+  "peerDependencies": {
+    "vue": ">=3"
+  }
+}

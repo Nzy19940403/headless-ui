@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "composite": true,
+    "declaration": true,
+    "lib": ["ES2022", "DOM"],
+    "ignoreDeprecations": "6.0"
+  },
+  "references": [{ "path": "../core" }],
+  "include": ["src/**/*.ts"]
+}

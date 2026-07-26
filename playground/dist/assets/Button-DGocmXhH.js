@@ -1,0 +1,1 @@
+import{j as i}from"./index-DU8LK60z.js";function s({variant:t="primary",size:o="md",className:n,...u}){return i.jsx("button",{...u,className:["ui-button",`ui-button--${t}`,`ui-button--${o}`,n].filter(Boolean).join(" ")})}export{s as B};

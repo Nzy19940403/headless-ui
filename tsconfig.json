@@ -1,0 +1,19 @@
+﻿{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@demo/ui-core": ["packages/core/src"],
+      "@demo/ui-react": ["packages/react/src"],
+      "@demo/ui-vue": ["packages/vue/src"],
+      "@demo/ui-web-components": ["packages/web-components/src"],
+      "@demo/ui-theme": ["packages/theme/src/index.css"]
+    }
+  },
+  "files": [],
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./packages/react" },
+    { "path": "./packages/vue" },
+    { "path": "./packages/web-components" }
+  ]
+}

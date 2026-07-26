@@ -1,0 +1,1 @@
+import{d as t,o as n,c as s,r as o,n as r}from"./ComponentPage-CTZyGNXm.js";const p=t({__name:"UiTag",props:{tone:{default:"neutral"}},setup(e){return(a,l)=>(n(),s("span",{class:r(["ui-tag",`ui-tag--${e.tone}`])},[o(a.$slots,"default")],2))}});export{p as _};

@@ -1,0 +1,15 @@
+{
+  "name": "@demo/ui-react",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "@ark-ui/react": "^5.37.2",
+    "@demo/ui-core": "*"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  }
+}

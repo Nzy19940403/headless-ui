@@ -5,8 +5,28 @@ export interface ComponentManifest {
   aliases: string[]
   category: ArkComponentCategory
   source: 'ark-ui'
-  renderers: { react: 'available'; vue: 'available'; webComponent: 'planned' }
+  renderers: { react: 'available'; vue: 'available'; webComponent: 'available' | 'planned' }
 }
+
+const webComponentImplementations = new Set([
+  'Accordion',
+  'Avatar',
+  'Checkbox',
+  'Combobox',
+  'DatePicker',
+  'Dialog',
+  'Drawer',
+  'NumberInput',
+  'PasswordInput',
+  'ProgressLinear',
+  'RadioGroup',
+  'SegmentGroup',
+  'Select',
+  'Slider',
+  'Tabs',
+  'Toggle',
+  'Tooltip',
+])
 
 export const arkComponentCatalog: ComponentManifest[] = [
   ['Accordion', 'disclosure'], ['AngleSlider', 'form'], ['Avatar', 'media'], ['Carousel', 'media'],
@@ -27,5 +47,9 @@ export const arkComponentCatalog: ComponentManifest[] = [
   aliases: [name, name.replace(/[A-Z]/g, value => ` ${value}`).trim()],
   category: category as ArkComponentCategory,
   source: 'ark-ui' as const,
-  renderers: { react: 'available' as const, vue: 'available' as const, webComponent: 'planned' as const },
+  renderers: {
+    react: 'available' as const,
+    vue: 'available' as const,
+    webComponent: (webComponentImplementations.has(name) ? 'available' : 'planned') as 'available' | 'planned',
+  },
 }))

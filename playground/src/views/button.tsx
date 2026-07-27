@@ -1,7 +1,7 @@
 ﻿import { useState } from 'react'
 import { defineComponent, h, ref } from 'vue'
-import { Button } from '@demo/ui-react'
-import UiButton from '@demo/ui-vue/UiButton.vue'
+import { HButton } from '@demo/ui-react'
+import VueHButton from '@demo/ui-vue/HButton.vue'
 import { ComponentPage } from './ComponentPage'
 import type { ViewDefinition } from './types'
 
@@ -11,7 +11,7 @@ const VueButtonDemo = defineComponent({
     const clicks = ref(0)
 
     return () => h('div', { class: 'demo-stack' }, [
-      h(UiButton, { onClick: () => { clicks.value += 1 } }, { default: () => 'Primary action' }),
+      h(VueHButton, { onClick: () => { clicks.value += 1 } }, { default: () => 'Primary action' }),
       h('span', { class: 'demo-result' }, `Clicked ${clicks.value} times`),
     ])
   },
@@ -22,7 +22,7 @@ function ButtonWebDemo() {
 
   return (
     <div className="demo-stack">
-      <ui-button onClick={() => setClicks(value => value + 1)}>Primary action</ui-button>
+      <h-button onClick={() => setClicks(value => value + 1)}>Primary action</h-button>
       <span className="demo-result">Clicked {clicks} times</span>
     </div>
   )
@@ -32,11 +32,12 @@ export default function ButtonView() {
   const [clicks, setClicks] = useState(0)
 
   const definition: ViewDefinition = {
+    apiKey: 'button',
     title: 'Button',
     description: 'A command component with the same public contract across React, Vue, and Web Component render layers.',
     reactDemo: (
       <div className="demo-stack">
-        <Button onClick={() => setClicks(value => value + 1)}>Primary action</Button>
+        <HButton onClick={() => setClicks(value => value + 1)}>Primary action</HButton>
         <span className="demo-result">Clicked {clicks} times</span>
       </div>
     ),

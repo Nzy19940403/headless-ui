@@ -1,0 +1,76 @@
+/* Theme: industry — Mining IoT light (日班). Tokens from wc-ui DESIGN.md. */
+
+[data-theme='industry'] {
+  --ui-font-family: Inter, 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+  --ui-font-size-body: 14px;
+  --ui-font-size-button: 12px;
+  --ui-font-weight-button: 500;
+  --ui-line-height: 1.5;
+
+  /* colors.light-* */
+  --ui-color-text: #000000;
+  --ui-color-text-secondary: #768288;
+  --ui-color-muted: #b0bcc2;
+
+  --ui-color-primary: #1890ff;
+  --ui-color-primary-hover: #40a9ff;
+  --ui-color-primary-active: #096dd9;
+  --ui-color-primary-focus: rgba(24, 144, 255, 0.35);
+  --ui-color-primary-soft: rgba(24, 144, 255, 0.15);
+  --ui-color-primary-contrast: #ffffff;
+
+  --ui-color-control-bg: #ffffff;
+  --ui-color-control-muted: #dde4e6;
+  --ui-color-control-border: #dde4e6;
+
+  --ui-color-surface: #ffffff;
+  --ui-color-surface-muted: #f5f5f5;
+  --ui-color-canvas: #ffffff;
+  --ui-color-canvas-soft: #f0f5f9;
+  --ui-color-sidebar: #fafbfc;
+  --ui-color-hairline: #dde4e6;
+  --ui-color-hairline-soft: #eef1f4;
+  --ui-color-overlay: rgba(0, 0, 0, 0.45);
+  --ui-color-sidebar-hover: #e7f4ff;
+  --ui-color-sidebar-active-fg: #1890ff;
+  --ui-color-sidebar-active-bg: #f0f5ff;
+
+  /* semantic (shared across industry light/dark) */
+  --ui-color-success: #52c41a;
+  --ui-color-success-bg: rgba(82, 196, 26, 0.12);
+  --ui-color-success-fg: #389e0d;
+  --ui-color-warning: #faad14;
+  --ui-color-warning-bg: rgba(250, 173, 20, 0.12);
+  --ui-color-warning-fg: #d48806;
+  --ui-color-danger: #ff4d4f;
+  --ui-color-danger-bg: rgba(255, 77, 79, 0.12);
+  --ui-color-danger-fg: #cf1322;
+  --ui-color-info: #1890ff;
+  --ui-color-info-bg: rgba(24, 144, 255, 0.12);
+  --ui-color-info-fg: #096dd9;
+  --ui-color-ai: #722ed1;
+  --ui-color-ai-bg: rgba(114, 46, 209, 0.12);
+  --ui-color-neutral-bg: #f5f5f5;
+  --ui-color-neutral-fg: #768288;
+
+  /* industrial: low, flat elevation */
+  --ui-shadow-sm: 0 1.5px 0 0 rgba(0, 0, 0, 0.043);
+  --ui-shadow-md: 0 3px 8px rgba(0, 0, 0, 0.08);
+  --ui-shadow-overlay: 0 8px 28px rgba(0, 0, 0, 0.18);
+
+  /* rounded: xs–lg from DESIGN (light side) */
+  --ui-radius-control: 4.5px;
+  --ui-radius-checkbox: 3px;
+  --ui-radius-panel: 6px;
+  --ui-radius-tag: 1.5px;
+  --ui-radius-nav: 3px;
+
+  /* dense controls ~30px */
+  --ui-space-button-y: 5px;
+  --ui-space-button-x: 14px;
+  --ui-control-height: 30px;
+  --ui-control-height-sm: 24px;
+  --ui-control-height-lg: 36px;
+
+  --ui-transition-fast: 0.12s;
+}

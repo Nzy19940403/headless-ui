@@ -1,0 +1,94 @@
+/* Theme: default — product baseline tokens (also applied on :root). */
+
+:root,
+[data-theme='default'] {
+  --ui-font-family: Inter, 'PingFang SC', 'Microsoft YaHei', ui-sans-serif, system-ui, sans-serif;
+  --ui-font-size-body: 14px;
+  --ui-font-size-button: 14px;
+  --ui-font-weight-button: 500;
+  --ui-line-height: 1.5;
+
+  --ui-color-text: #172033;
+  --ui-color-text-secondary: #405577;
+  --ui-color-muted: #66738b;
+
+  --ui-color-primary: #2563eb;
+  --ui-color-primary-hover: #1d4ed8;
+  --ui-color-primary-active: #1e40af;
+  --ui-color-primary-focus: #93c5fd;
+  --ui-color-primary-soft: #dbe8ff;
+  --ui-color-primary-contrast: #ffffff;
+
+  --ui-color-control-bg: #ffffff;
+  --ui-color-control-muted: #cbd5e1;
+  --ui-color-control-border: #b8c5d8;
+
+  --ui-color-surface: #ffffff;
+  --ui-color-surface-muted: #e8eef9;
+  --ui-color-canvas: #ffffff;
+  --ui-color-canvas-soft: #f4f7fb;
+  --ui-color-sidebar: #eef3fb;
+  --ui-color-hairline: #e0e7f2;
+  --ui-color-hairline-soft: #eef1f4;
+  --ui-color-overlay: #17203366;
+  --ui-color-sidebar-hover: #dbe8ff;
+  --ui-color-sidebar-active-fg: #173f9b;
+  --ui-color-sidebar-active-bg: #dbe8ff;
+
+  --ui-color-success: #16a34a;
+  --ui-color-success-bg: #dcfce7;
+  --ui-color-success-fg: #166534;
+  --ui-color-warning: #d97706;
+  --ui-color-warning-bg: #fef3c7;
+  --ui-color-warning-fg: #92400e;
+  --ui-color-danger: #dc2626;
+  --ui-color-danger-bg: #fee2e2;
+  --ui-color-danger-fg: #991b1b;
+  --ui-color-info: #0284c7;
+  --ui-color-info-bg: #e0f2fe;
+  --ui-color-info-fg: #075985;
+  --ui-color-ai: #722ed1;
+  --ui-color-ai-bg: rgba(114, 46, 209, 0.12);
+  --ui-color-neutral-bg: #f1f5f9;
+  --ui-color-neutral-fg: #475569;
+
+  --ui-shadow-sm: 0 14px 40px #2f4d7a12;
+  --ui-shadow-md: 0 3px 8px rgba(0, 0, 0, 0.08);
+  --ui-shadow-overlay: 0 24px 80px #17203344;
+
+  --ui-radius-control: 10px;
+  --ui-radius-checkbox: 5px;
+  --ui-radius-panel: 16px;
+  --ui-radius-tag: 999px;
+  --ui-radius-nav: 9px;
+
+  --ui-space-button-y: 11px;
+  --ui-space-button-x: 16px;
+  --ui-control-height: 40px;
+  --ui-control-height-sm: 32px;
+  --ui-control-height-lg: 46px;
+
+  --ui-transition-fast: 0.12s;
+
+  /* layout tokens */
+  --ui-space-none: 0;
+  --ui-space-2xs: 2px;
+  --ui-space-xs: 4px;
+  --ui-space-sm: 8px;
+  --ui-space-md: 12px;
+  --ui-space-lg: 16px;
+  --ui-space-xl: 24px;
+  --ui-space-2xl: 32px;
+
+  --ui-container-sm: 640px;
+  --ui-container-md: 768px;
+  --ui-container-lg: 1024px;
+  --ui-container-xl: 1280px;
+  --ui-container-2xl: 1536px;
+  --ui-container-pad-x: 16px;
+
+  --ui-bp-sm: 640px;
+  --ui-bp-md: 768px;
+  --ui-bp-lg: 1024px;
+  --ui-bp-xl: 1280px;
+}

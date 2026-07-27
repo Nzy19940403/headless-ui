@@ -5,7 +5,8 @@
     "composite": true,
     "declaration": true,
     "lib": ["ES2022", "DOM"],
-    "ignoreDeprecations": "6.0"
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false
   },
   "references": [{ "path": "../core" }],
   "include": ["src/**/*.ts"]

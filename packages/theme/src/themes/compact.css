@@ -1,0 +1,22 @@
+/* Theme: compact — denser layout, purple accent. */
+
+[data-theme='compact'] {
+  --ui-color-primary: #7c3aed;
+  --ui-color-primary-hover: #6d28d9;
+  --ui-color-primary-active: #5b21b6;
+  --ui-color-primary-focus: #c4b5fd;
+  --ui-color-primary-soft: #ede9fe;
+  --ui-color-surface-muted: #f1efff;
+  --ui-color-sidebar: #f3f0ff;
+  --ui-color-sidebar-hover: #ede9fe;
+  --ui-color-sidebar-active-fg: #5b21b6;
+  --ui-color-sidebar-active-bg: #ede9fe;
+  --ui-radius-control: 6px;
+  --ui-radius-checkbox: 4px;
+  --ui-radius-panel: 12px;
+  --ui-space-button-y: 8px;
+  --ui-space-button-x: 12px;
+  --ui-control-height: 36px;
+  --ui-control-height-sm: 28px;
+  --ui-control-height-lg: 42px;
+}

@@ -1,0 +1,24 @@
+Vue wrapper prop forwarding rules for Ark UI
+
+Context
+- Core contracts use optional booleans for many public props: open, disabled, closeOnSelect, inline, etc.
+- Vue runtime casts absent Boolean props to false when props are generated from type declarations.
+- That false is not the same as "caller intentionally passed false".
+
+Rule
+- For controlled props such as open, value, view, focusedValue:
+  - forward the prop to Ark only when the caller actually provided it.
+  - never let an absent optional prop become an accidental controlled false.
+- For behavior flags with Ark defaults, such as closeOnSelect/openOnClick/fixedWeeks/showWeekNumbers:
+  - forward the prop only when provided.
+  - otherwise let Ark use its own default.
+- Use getCurrentInstance().vnode.props to detect whether a prop was provided.
+- Check both camelCase and kebab-case names; readonly may appear as readonly or read-only.
+
+Failure mode this prevents
+- DatePicker emitted openChange with open=true, but the wrapper kept passing open=false because open was absent in user code.
+- The demo displayed open=true from the event, while Ark immediately stayed closed and did not render the popup.
+
+Do not
+- Do not use setIfDefined for optional Boolean props in Vue wrappers.
+- Do not assume React prop semantics and Vue prop semantics are identical.

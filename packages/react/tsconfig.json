@@ -4,8 +4,7 @@
     "jsx": "react-jsx",
     "outDir": "dist",
     "composite": true,
-    "declaration": true,
-    "ignoreDeprecations": "6.0"
+    "declaration": true
   },
   "references": [{ "path": "../core" }],
   "include": ["src"]

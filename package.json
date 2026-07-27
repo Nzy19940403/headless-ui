@@ -8,19 +8,34 @@
   "scripts": {
     "dev": "vite playground",
     "typecheck": "tsc --noEmit",
-    "build": "tsc -b packages/*/tsconfig.json"
+    "build": "tsc -b packages/core/tsconfig.json packages/react/tsconfig.json packages/vue/tsconfig.json packages/web-components/tsconfig.json"
   },
   "dependencies": {
     "@ark-ui/react": "^5.37.2",
     "@ark-ui/vue": "^5.37.2",
+    "@tanstack/lit-table": "^8.21.3",
+    "@tanstack/react-table": "^8.21.3",
+    "@tanstack/table-core": "^8.21.3",
+    "@tanstack/vue-table": "^8.21.3",
     "@zag-js/accordion": "^1.42.0",
+    "@zag-js/avatar": "^1.42.0",
     "@zag-js/checkbox": "^1.42.0",
+    "@zag-js/combobox": "^1.42.0",
+    "@zag-js/date-picker": "^1.42.0",
     "@zag-js/dialog": "^1.42.0",
+    "@zag-js/number-input": "^1.42.0",
+    "@zag-js/password-input": "^1.42.0",
+    "@zag-js/progress": "^1.42.0",
+    "@zag-js/radio-group": "^1.42.0",
     "@zag-js/react": "^1.42.0",
+    "@zag-js/select": "^1.42.0",
+    "@zag-js/slider": "^1.42.0",
     "@zag-js/switch": "^1.42.0",
     "@zag-js/tabs": "^1.42.0",
+    "@zag-js/tooltip": "^1.42.0",
     "@zag-js/vanilla": "^1.42.0",
     "@zag-js/vue": "^1.42.0",
+    "lit": "^3.3.3",
     "react-router-dom": "^6.28.0"
   },
   "devDependencies": {

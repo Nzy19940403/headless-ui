@@ -1,0 +1,170 @@
+# Web Component 状态源规则（给 AI / Grok 必读）
+
+背景：
+RadioGroup 曾经出现过“第一次点击能切值但 DOM 不更新、第二次点击失效、切到 night 后 day 仍然显示选中”的问题。
+根因不是 Zag.js 不行，也不是 Web Component 天生不行，而是实现里同时维护了多份状态：
+- Zag machine value
+- native input.checked / defaultChecked
+- item/control/text 上的 data-state
+- 手写 change/click handler
+- host attribute / framework demo state
+
+这类代码会让 AI 越补越复杂，最终状态源漂移。以后写 WC 组件必须遵守下面规则。
+
+1. 每个交互组件必须先声明模式
+
+只能选一种：
+
+- Enhancement mode：消费者提供 light DOM anatomy，WC 只把 Zag props spread 到对应 part。
+- Generated anatomy mode：WC 生成固定 light DOM anatomy，但交互状态仍然只来自 Zag machine。
+- Lit render mode：复杂组件由 Lit 负责结构和数据渲染，Zag 负责交互状态；高频状态只做最小 DOM patch。
+
+不要在一个组件里混用多套模式。
+
+2. 交互状态只能有一个 owner
+
+- 首选 owner：Zag machine。
+- 受控模式 owner：外部 value/open/checked prop；Zag 接收受控值并发出 change event。
+- CSS 不是状态源。
+- native input 不是视觉状态源。
+- DOM dataset 不是状态源，只是 Zag state 的投影结果。
+
+禁止为了修 bug 新增“内部 currentValue / selectedMap / checkedCache / openState”等并行状态，除非它只是缓存上一次 patch 目标用于性能优化，而且不参与业务判断。
+
+3. default-* 不能当成受控值
+
+错误：
+- default-value 传给 value
+- default-open 传给 open
+- default-checked 传给 checked
+
+正确：
+- value/open/checked 存在时才传受控字段。
+- defaultValue/defaultOpen/defaultChecked 只用于初始化非受控状态。
+- default-* 改变后如果要支持运行时重置，必须显式说明策略；不要偷偷让它和 value 抢控制权。
+
+4. Zag props 是行为来源，不要手写同一份行为
+
+拿到 api.getXxxProps(...) 后：
+- 优先完整 spread 到目标节点。
+- 不要再给同一个 part 手动 addEventListener('click') 去调用 api.setValue / api.toggleChecked。
+- 不要 event.preventDefault() 覆盖 Zag 的默认交互。
+- 如果确实必须补事件，代码旁必须说明 Zag 哪个 props 不覆盖该场景，以及为什么补事件不会制造第二状态源。
+
+5. CSS 状态只读投影属性
+
+组件样式必须通过这些公开投影读取状态：
+- data-state="checked|unchecked|open|closed|active|inactive"
+- data-disabled
+- data-highlighted
+- aria-selected / aria-checked / aria-expanded
+
+不要让 CSS 依赖 JS 私有变量。
+不要让视觉状态只写在 input.checked 上。
+如果需要 item、control、text 多处都有状态，必须在一个 patch 函数里从 Zag state 派生，不能分散维护。
+
+Zag anatomy 的 `data-part` 名称必须以 Zag/Ark 实际输出为准，不要自己发明短名。
+例如 RadioGroup 必须使用：
+- item
+- item-control
+- item-text
+- item-hidden-input
+
+不要写成 control / text / hidden-input 后再 spread Zag props；spread 后这些 part 会被改成 Zag 名称，后续 querySelector 会失效，导致状态投影漏节点。
+
+6. native input 只能服务 form / a11y
+
+如果组件内部生成 input：
+- input 的 checked/value/disabled/name 必须从 Zag 或 host prop 同步。
+- input 不应该成为视觉状态 owner。
+- 不要用 input.checked 决定外层 item 是否选中；应该用 api.getItemState / machine state。
+- 不要同时把 defaultChecked 当实时状态写入；除非明确是为了浏览器 form reset，并在注释中说明。
+
+7. Lit 使用规则
+
+复杂 WC 可以用 Lit，但 Lit 也不是第二状态源。
+
+- Lit render 负责结构和低频数据：items、label、placeholder、layout。
+- Zag tick 不调用 requestUpdate()。
+- hover/highlight/selected/open 这类高频状态只 patch 必要 DOM。
+- patch 必须从 Zag api 派生，不引入业务判断状态。
+- 列表渲染必须用稳定 key，例如 repeat(items, item => item.value, ...)。
+
+8. 生成 WC 前必须写设计摘要
+
+AI 在新建或重写 WC 前，先写并遵守：
+
+Component:
+Mode:
+State owner:
+Render owner:
+CSS state projection:
+Native form role:
+Controlled/uncontrolled mapping:
+Forbidden manual behavior:
+
+示例：
+
+Component: HRadioGroup
+Mode: Generated anatomy mode
+State owner: Zag radio-group machine; external value attribute only when present
+Render owner: WC creates anatomy only when items/name/disabled structural data changes
+CSS state projection: patch data-state/aria-checked from api.getItemState()
+Native form role: hidden radio input mirrors Zag state for form/a11y only
+Controlled/uncontrolled mapping: value -> controlled value; default-value -> defaultValue only
+Forbidden manual behavior: no custom click toggle; no selectedMap; no CSS based on input.checked
+
+8.1 React-style output property 规则
+
+如果 React 组件暴露 `onValueChange` / `onCheckedChange` / `onOpenChange`：
+- Web Component 必须暴露同名 JS property callback。
+- Web Component 仍然必须 dispatch kebab-case CustomEvent：`value-change` / `checked-change` / `open-change`。
+- property callback 和 CustomEvent 的 payload 必须是同一个 Core details 对象。
+- 不要只依赖 JSX attribute；React 对 custom element 的事件/property 处理并不等同于普通 React 组件。
+- WC 必须处理 pre-upgrade property：如果 `el.onValueChange = fn` 发生在 custom element upgrade 之前，组件连接时要 delete own property 再重新赋值，让 class setter 接管。
+
+如果 React 组件没有对应 output，不要只在 WC 里单独发明 React-style property callback。需要新增 output 时，先把 React / Vue / WC / docs/api 一起对齐。
+
+9. Review checklist
+
+检查 WC 实现时，看到下面代码要停下来问“是不是违反状态源规则”：
+
+- addEventListener('click') + api.setValue / api.toggleChecked
+- defaultValue/defaultOpen/defaultChecked 被映射到 value/open/checked
+- input.checked 同时被用来判断视觉状态
+- 同一状态写到多个节点，但不在同一个 patch 函数集中派生
+- requestUpdate() 出现在 Zag subscribe / machine tick 中
+- replaceChildren()/innerHTML 在普通属性变化或状态变化时执行，导致用户子节点/事件丢失
+- classList.toggle(...) 维护 checked/open/selected 视觉状态，而不是 data-state/aria-* 投影
+
+10. React 事件回调对齐规则（onXxx）
+
+WC 可以额外提供 camelCase 属性回调，方便业务像 React 一样赋值：
+
+- el.onValueChange = (details) => {}
+- el.onCheckedChange = (details) => {}
+- el.onOpenChange = (details) => {}
+
+但必须遵守：
+
+- 只在对应 React 组件 (`packages/react/src/H*.tsx`) **已经暴露**同名 prop 时才加。
+- 对照表（以 React 为准，React 没有就不要发明）：
+  - onValueChange: Input, Select, RadioGroup, Tabs, Accordion
+  - onCheckedChange: Toggle, Checkbox
+  - onOpenChange: Dialog
+  - Button/Card/Tag/Badge/Avatar/Empty/Skeleton/Separator/Progress/Tooltip：不要强行加 onValueChange
+- payload 必须与 React 回调参数一致（Core details）。
+- 同时保留 kebab CustomEvent（value-change / checked-change / open-change）给 addEventListener。
+- 实现统一走 `emitDetail(host, eventName, detail, this._onXxx)`，不要只 dispatch 或只调 prop 一种。
+
+11. 最终原则
+
+WC 组件可以手写，也可以用 Lit。
+但不能闭门造车重写 Zag 已经提供的交互语义。
+实现要让代码读起来像：
+
+外部 props/attrs -> Zag machine -> api.getXxxProps / api.getXxxState -> DOM attributes -> CSS
+
+不要让它变成：
+
+外部 props/attrs -> Zag + input + dataset + 私有变量 + 手写事件 + CSS 各看各的

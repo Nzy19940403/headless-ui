@@ -1,0 +1,23 @@
+WC Zag spreadProps rule
+
+Problem
+- @zag-js/vanilla spreadProps stores previous attrs in an internal WeakMap.
+- On the next spreadProps call for the same node, it diffs old attrs vs new attrs.
+- That diff is what removes stale attrs like data-selected, data-state, data-highlighted, hidden, aria-expanded, etc.
+
+Rule
+- Do not call the cleanup returned by spreadProps before every re-bind.
+- On every machine tick or state sync, call spreadProps(el, api.getXxxProps(...)) again for the same live node.
+- Let spreadProps remove old attrs by diffing.
+
+Failure mode this prevents
+- DatePicker selected 2026-07-08, then selected 2026-07-09.
+- The old 2026-07-08 button kept data-selected because cleanup deleted spreadProps memory without removing the DOM attribute.
+- CSS followed the stale DOM projection, so two days looked selected.
+
+Allowed cleanup usage
+- Only use cleanup when permanently tearing down an externally attached behavior.
+- Never use cleanup as a routine "before bind" step.
+
+Review smell
+- If bindAllZagProps starts with cleanups.forEach(fn => fn()), stop and fix it.

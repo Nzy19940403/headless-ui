@@ -1,45 +1,53 @@
-# UI Library：Core + Adapters + Renderers
+# Headless UI
 
-这是“AI 生成组件方案”的最小原型：一份无框架 Core，分别接入 React、Vue 和 Web Component。
-
-```text
-Core：状态、事件、行为语义
-        ↓
-React / Vue / Web Component Adapter
-        ↓
-JSX / Vue Template / DOM Renderer
-```
-
-交互逻辑不在 `packages/core` 中重复实现：React/Vue 直接使用 Ark UI，Web Component 使用同源的 Zag machine；我们的代码只维护统一 Manifest、门面 API 和各 Renderer。
+这是一个面向 React、Vue 和 Web Component 的统一 UI 组件原型。
 
 ```text
-Ark UI / Zag.js
+packages/core
+  └─ 统一组件契约、事件 payload 和组件目录
         ↓
-React Renderer / Vue Renderer / Web Component Renderer
+React / Vue / Web Component Renderer
+  ├─ React/Vue：Ark UI renderer
+  └─ Web Component：Zag.js vanilla machine + light DOM
         ↓
-我们的 UiToggle / UiSelect / UiDialog
+packages/theme
+  └─ 共享 Design Token 和状态样式
 ```
 
-## Ark UI 组件目录
+`packages/core/src/*-contract.ts` 按组件拆分，是三端公开 API 的规范来源（一组件一文件）。Renderer 可以采用不同的语法，但必须遵守对应契约里的属性、默认值和事件 details。
 
-`packages/core/src/ark-catalog.ts` 已登记 Ark UI 当前官方组件目录。业务和 AI 只依赖我们的 Manifest；React/Vue Renderer 可以逐步映射到 Ark UI，Web Component Renderer 标记为后续计划。
+Web Component 没有使用 Lit。当前实现使用原生 `HTMLElement`、`customElements.define` 和 `@zag-js/vanilla`，业务页面提供 light DOM，Zag machine 负责注入行为、ARIA 和状态属性。
 
-## 启动 Playground
+组件 API 文档位于 [docs/api](docs/api/README.md)，每个组件都有独立的 README。
 
-React 宿主页面：
+库内公开组件统一 `H` 前缀：React/Vue 为 `HButton`，Web Component 标签为 `h-button`。Core 契约保持 `ButtonContract`（不加 H）。CSS 皮肤 class 仍为 `ui-*`。详见 [docs/api 命名约定](docs/api/README.md#命名约定h-前缀)。
+
+### 主题
+
+在 `html` 上设置 `data-theme`：
+
+| 值 | 说明 |
+| --- | --- |
+| `default` | 默认产品皮肤 |
+| `compact` | 紧凑紫色演示 |
+| `industry` | 工业物联网浅色（日班），对齐 `wc-ui` DESIGN |
+| `industry-dark` | 工业物联网深色（夜班） |
+
+Theme 按文件拆分：`packages/theme/src/themes/*.css` 只写 token，`components.css` 写组件皮肤。说明见 [packages/theme/src/themes.md](packages/theme/src/themes.md)。
+
+Web Component 以手写 `HTMLElement` + Zag light-DOM 增强为主；**复杂自渲染组件**（当前：`h-select`）使用 **Lit + Zag**，默认 light DOM 以复用主题。策略见 [packages/web-components/src/lit-policy.md](packages/web-components/src/lit-policy.md)。
+
+## 开发
 
 ```bash
+npm install
 npm run dev
 ```
 
-Vue 宿主页面（三种实现一起展示）：
+## 验证
 
 ```bash
-npm run dev:vue
+npm run typecheck
+npm run build
+npx vite build playground
 ```
-
-默认地址是 `http://localhost:5173`。Vue Playground 会由 Vue 创建页面，同时把 React 组件挂载到容器，并直接使用 Web Component。
-
-## 下一步
-
-增加 Component Manifest、Design Tokens、Dialog/Select/Table Core，以及从 UI Schema 到三端代码的生成器。

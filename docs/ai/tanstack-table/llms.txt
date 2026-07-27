@@ -1,0 +1,199 @@
+# LOCAL OFFLINE SNAPSHOT — do not fetch network
+# Source: https://tanstack.com/table/latest/llms.txt
+# Fetched: 2026-07-27
+# Note: framework example pages (*/examples/*.md) are not published as markdown on the docs site (404); only guides + API + adapters are included.
+# Paths below are relative to docs/ai/tanstack-table/
+
+# TanStack Table docs
+
+> Supercharge your tables or build a datagrid from scratch in any framework while retaining 100% control over markup and styles.
+
+- [Docs index](docs/index.md): This same Markdown index.
+- [LLMs index](llms.txt): This same Markdown index.
+- [Library home](https://tanstack.com/table/latest)
+- [GitHub](https://github.com/tanstack/table)
+- Packages: @tanstack/table-core, react-table.
+- Frameworks: Angular, Ember, React, Preact, Solid, Svelte, Vue, Qwik, Lit, Alpine, Vanilla.
+
+Use this index as the routing layer for the docs. Open one linked **local** Markdown page at a time (paths are relative to this folder). Prefer framework-specific pages when the user names a framework. Do not fetch the network.
+
+## Get Started
+
+### Getting Started
+
+- [Introduction](docs/introduction.md)
+- [Overview](docs/overview.md)
+- [Installation](docs/installation.md)
+- [Migrating to V8](docs/guide/migrating.md)
+- [FAQ](docs/faq.md)
+- [Angular: Angular Table Adapter](docs/framework/angular/angular-table.md)
+- [Lit: Lit Table Adapter](docs/framework/lit/lit-table.md)
+- [Qwik: Qwik Table Adapter](docs/framework/qwik/qwik-table.md)
+- [React: React Table Adapter](docs/framework/react/react-table.md)
+- [Solid: Solid Table Adapter](docs/framework/solid/solid-table.md)
+- [Svelte: Svelte Table Adapter](docs/framework/svelte/svelte-table.md)
+- [Vue: Vue Table Adapter](docs/framework/vue/vue-table.md)
+- [Vanilla: Vanilla JS (No Framework)](docs/vanilla.md)
+
+## Guides
+
+### Core Guides
+
+- [Data](docs/guide/data.md)
+- [Column Defs](docs/guide/column-defs.md)
+- [Table Instance](docs/guide/tables.md)
+- [Row Models](docs/guide/row-models.md)
+- [Rows](docs/guide/rows.md)
+- [Cells](docs/guide/cells.md)
+- [Header Groups](docs/guide/header-groups.md)
+- [Headers](docs/guide/headers.md)
+- [Columns](docs/guide/columns.md)
+- [Angular: Table State](docs/framework/angular/guide/table-state.md)
+- [Lit: Table State](docs/framework/lit/guide/table-state.md)
+- [Qwik: Table State](docs/framework/qwik/guide/table-state.md)
+- [React: Table State](docs/framework/react/guide/table-state.md)
+- [Solid: Table State](docs/framework/solid/guide/table-state.md)
+- [Svelte: Table State](docs/framework/svelte/guide/table-state.md)
+- [Vue: Table State](docs/framework/vue/guide/table-state.md)
+- [Vanilla: Table State](docs/framework/vanilla/guide/table-state.md)
+### Feature Guides
+
+- [Column Ordering](docs/guide/column-ordering.md)
+- [Column Pinning](docs/guide/column-pinning.md)
+- [Column Sizing](docs/guide/column-sizing.md)
+- [Column Visibility](docs/guide/column-visibility.md)
+- [Column Filtering](docs/guide/column-filtering.md)
+- [Global Filtering](docs/guide/global-filtering.md)
+- [Fuzzy Filtering](docs/guide/fuzzy-filtering.md)
+- [Column Faceting](docs/guide/column-faceting.md)
+- [Global Faceting](docs/guide/global-faceting.md)
+- [Grouping](docs/guide/grouping.md)
+- [Expanding](docs/guide/expanding.md)
+- [Pagination](docs/guide/pagination.md)
+- [Row Pinning](docs/guide/row-pinning.md)
+- [Row Selection](docs/guide/row-selection.md)
+- [Sorting](docs/guide/sorting.md)
+- [Virtualization](docs/guide/virtualization.md)
+- [Custom Features](docs/guide/custom-features.md)
+### Enterprise
+
+- [AG Grid](docs/enterprise/ag-grid.md)
+
+## API
+
+### Core APIs
+
+- [Column Def](docs/api/core/column-def.md)
+- [Table](docs/api/core/table.md)
+- [Column](docs/api/core/column.md)
+- [Header Group](docs/api/core/header-group.md)
+- [Header](docs/api/core/header.md)
+- [Row](docs/api/core/row.md)
+- [Cell](docs/api/core/cell.md)
+### Feature APIs
+
+- [Column Filtering](docs/api/features/column-filtering.md)
+- [Column Faceting](docs/api/features/column-faceting.md)
+- [Column Ordering](docs/api/features/column-ordering.md)
+- [Column Pinning](docs/api/features/column-pinning.md)
+- [Column Sizing](docs/api/features/column-sizing.md)
+- [Column Visibility](docs/api/features/column-visibility.md)
+- [Global Faceting](docs/api/features/global-faceting.md)
+- [Global Filtering](docs/api/features/global-filtering.md)
+- [Sorting](docs/api/features/sorting.md)
+- [Grouping](docs/api/features/grouping.md)
+- [Expanding](docs/api/features/expanding.md)
+- [Pagination](docs/api/features/pagination.md)
+- [Row Pinning](docs/api/features/row-pinning.md)
+- [Row Selection](docs/api/features/row-selection.md)
+
+## Examples
+
+### Examples
+
+- [Angular: Basic](docs/framework/angular/examples/basic.md)
+- [Angular: Column Grouping](docs/framework/angular/examples/grouping.md)
+- [Angular: Column Ordering](docs/framework/angular/examples/column-ordering.md)
+- [Angular: Column Pinning](docs/framework/angular/examples/column-pinning.md)
+- [Angular: Sticky Column Pinning](docs/framework/angular/examples/column-pinning-sticky.md)
+- [Angular: Column Visibility](docs/framework/angular/examples/column-visibility.md)
+- [Angular: Column Filters](docs/framework/angular/examples/filters.md)
+- [Angular: Row Selection](docs/framework/angular/examples/row-selection.md)
+- [Angular: Expanding](docs/framework/angular/examples/expanding.md)
+- [Angular: Sub Components](docs/framework/angular/examples/sub-components.md)
+- [Angular: Signal Input](docs/framework/angular/examples/signal-input.md)
+- [Angular: Editable data](docs/framework/angular/examples/editable.md)
+- [Angular: Row DnD](docs/framework/angular/examples/row-dnd.md)
+- [Angular: Performant Column Resizing](docs/framework/angular/examples/column-resizing-performant.md)
+- [Lit: Basic](docs/framework/lit/examples/basic.md)
+- [Lit: Column Sizing](docs/framework/lit/examples/column-sizing.md)
+- [Lit: Filters](docs/framework/lit/examples/filters.md)
+- [Lit: Row Selection](docs/framework/lit/examples/row-selection.md)
+- [Lit: Sorting](docs/framework/lit/examples/sorting.md)
+- [Lit: Virtualized Rows](docs/framework/lit/examples/virtualized-rows.md)
+- [Qwik: Basic](docs/framework/qwik/examples/basic.md)
+- [Qwik: Filters](docs/framework/qwik/examples/filters.md)
+- [Qwik: Row Selection](docs/framework/qwik/examples/row-selection.md)
+- [Qwik: Sorting](docs/framework/qwik/examples/sorting.md)
+- [React: Basic](docs/framework/react/examples/basic.md)
+- [React: Header Groups](docs/framework/react/examples/column-groups.md)
+- [React: Column Filters](docs/framework/react/examples/filters.md)
+- [React: Column Filters (Faceted)](docs/framework/react/examples/filters-faceted.md)
+- [React: Fuzzy Search Filters](docs/framework/react/examples/filters-fuzzy.md)
+- [React: Column Ordering](docs/framework/react/examples/column-ordering.md)
+- [React: Column Ordering (DnD)](docs/framework/react/examples/column-dnd.md)
+- [React: Column Pinning](docs/framework/react/examples/column-pinning.md)
+- [React: Sticky Column Pinning](docs/framework/react/examples/column-pinning-sticky.md)
+- [React: Column Sizing](docs/framework/react/examples/column-sizing.md)
+- [React: Performant Column Resizing](docs/framework/react/examples/column-resizing-performant.md)
+- [React: Column Visibility](docs/framework/react/examples/column-visibility.md)
+- [React: Editable Data](docs/framework/react/examples/editable-data.md)
+- [React: Expanding](docs/framework/react/examples/expanding.md)
+- [React: Sub Components](docs/framework/react/examples/sub-components.md)
+- [React: Fully Controlled](docs/framework/react/examples/fully-controlled.md)
+- [React: Grouping](docs/framework/react/examples/grouping.md)
+- [React: Pagination](docs/framework/react/examples/pagination.md)
+- [React: Pagination Controlled](docs/framework/react/examples/pagination-controlled.md)
+- [React: Row DnD](docs/framework/react/examples/row-dnd.md)
+- [React: Row Pinning](docs/framework/react/examples/row-pinning.md)
+- [React: Row Selection](docs/framework/react/examples/row-selection.md)
+- [React: Sorting](docs/framework/react/examples/sorting.md)
+- [React: Virtualized Columns](docs/framework/react/examples/virtualized-columns.md)
+- [React: Virtualized Columns (Experimental)](docs/framework/react/examples/virtualized-columns-experimental.md)
+- [React: Virtualized Rows](docs/framework/react/examples/virtualized-rows.md)
+- [React: Virtualized Rows (Experimental)](docs/framework/react/examples/virtualized-rows-experimental.md)
+- [React: Virtualized Infinite Scrolling](docs/framework/react/examples/virtualized-infinite-scrolling.md)
+- [React: Kitchen Sink](docs/framework/react/examples/kitchen-sink.md)
+- [React: React Bootstrap](docs/framework/react/examples/bootstrap.md)
+- [React: Material UI Pagination](docs/framework/react/examples/material-ui-pagination.md)
+- [React: React Full Width](docs/framework/react/examples/full-width-table.md)
+- [React: React Full Width Resizable](docs/framework/react/examples/full-width-resizable-table.md)
+- [React: Custom Features](docs/framework/react/examples/custom-features.md)
+- [React: Query Router Search Params](docs/framework/react/examples/query-router-search-params.md)
+- [Solid: Basic](docs/framework/solid/examples/basic.md)
+- [Solid: Column Groups](docs/framework/solid/examples/column-groups.md)
+- [Solid: Column Ordering](docs/framework/solid/examples/column-ordering.md)
+- [Solid: Column Visibility](docs/framework/solid/examples/column-visibility.md)
+- [Solid: Filters](docs/framework/solid/examples/filters.md)
+- [Solid: Sorting](docs/framework/solid/examples/sorting.md)
+- [Solid: Solid Bootstrap](docs/framework/solid/examples/bootstrap.md)
+- [Svelte: Basic](docs/framework/svelte/examples/basic.md)
+- [Svelte: Column Groups](docs/framework/svelte/examples/column-groups.md)
+- [Svelte: Column Ordering](docs/framework/svelte/examples/column-ordering.md)
+- [Svelte: Column Pinning](docs/framework/svelte/examples/column-pinning.md)
+- [Svelte: Column Visibility](docs/framework/svelte/examples/column-visibility.md)
+- [Svelte: Filtering](docs/framework/svelte/examples/filtering.md)
+- [Svelte: Sorting](docs/framework/svelte/examples/sorting.md)
+- [Vue: Basic](docs/framework/vue/examples/basic.md)
+- [Vue: Column Ordering](docs/framework/vue/examples/column-ordering.md)
+- [Vue: Column Pinning](docs/framework/vue/examples/column-pinning.md)
+- [Vue: Pagination](docs/framework/vue/examples/pagination.md)
+- [Vue: Row Selection](docs/framework/vue/examples/row-selection.md)
+- [Vue: Sorting](docs/framework/vue/examples/sorting.md)
+- [Vue: Sub Components](docs/framework/vue/examples/sub-components.md)
+- [Vue: Column Filters](docs/framework/vue/examples/filters.md)
+- [Vue: Virtualized Rows](docs/framework/vue/examples/virtualized-rows.md)
+- [Vue: Grouping](docs/framework/vue/examples/grouping.md)
+- [Vanilla: Basic](docs/framework/vanilla/examples/basic.md)
+- [Vanilla: Pagination](docs/framework/vanilla/examples/pagination.md)
+- [Vanilla: Sorting](docs/framework/vanilla/examples/sorting.md)

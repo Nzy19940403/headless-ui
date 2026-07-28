@@ -13,3 +13,11 @@ Port 5175 is in use, trying another one...
 [2m19:18:29[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mindex.html[22m
 [2m19:49:39[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mindex.html[22m
 [2m21:11:52[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mindex.html[22m
+[2m23:20:45[22m [36m[1m[vite][22m[39m [32mplayground/vite.config.ts changed, restarting server...[39m
+Re-optimizing dependencies because vite config has changed
+[2m23:20:45[22m [36m[1m[vite][22m[39m server restarted.
+[2m23:28:28[22m [36m[1m[vite][22m[39m [32mplayground/vite.config.ts changed, restarting server...[39m
+[2m23:28:28[22m [36m[1m[vite][22m[39m server restarted.
+[2m20:53:18[22m [36m[1m[vite][22m[39m [32mplayground/vite.config.ts changed, restarting server...[39m
+Re-optimizing dependencies because vite config has changed
+[2m20:53:18[22m [36m[1m[vite][22m[39m server restarted.

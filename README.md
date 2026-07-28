@@ -37,6 +37,10 @@ Theme 按文件拆分：`packages/theme/src/themes/*.css` 只写 token，`compon
 
 Web Component 以手写 `HTMLElement` + Zag light-DOM 增强为主；**复杂自渲染组件**（当前：`h-select`）使用 **Lit + Zag**，默认 light DOM 以复用主题。策略见 [packages/web-components/src/lit-policy.md](packages/web-components/src/lit-policy.md)。
 
+**图表**（`HChart` / `h-chart`）底层为 Apache ECharts：逻辑集中在 `packages/chart`（`createChartController` + presets），React / Vue / WC 只挂 host。契约见 [docs/api/chart](docs/api/chart/README.md)。
+
+**树**（`HTree` / `h-tree`）为 Ark/Zag TreeView + TanStack Virtual（`getVisibleNodes` 扁平可见行）。契约见 [docs/api/tree](docs/api/tree/README.md)。
+
 ## 开发
 
 ```bash

@@ -1,0 +1,13 @@
+Failed to resolve dependency: [36mecharts[39m, present in 'optimizeDeps.include'
+Error: The following dependencies are imported but could not be resolved:
+
+  [36mecharts/core[39m [37m[2m(imported by F:/project/ui-library/packages/chart/src/register.ts)[22m[39m
+  [36mecharts/charts[39m [37m[2m(imported by F:/project/ui-library/packages/chart/src/register.ts)[22m[39m
+  [36mecharts/components[39m [37m[2m(imported by F:/project/ui-library/packages/chart/src/register.ts)[22m[39m
+  [36mecharts/renderers[39m [37m[2m(imported by F:/project/ui-library/packages/chart/src/register.ts)[22m[39m
+  [36mecharts/features[39m [37m[2m(imported by F:/project/ui-library/packages/chart/src/register.ts)[22m[39m
+
+Are they installed?
+    at file:///F:/project/ui-library/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:50669:15
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///F:/project/ui-library/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:50174:26

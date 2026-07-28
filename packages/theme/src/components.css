@@ -2814,3 +2814,145 @@ h-spacer.ui-spacer--fixed {
     grid-template-columns: 1fr;
   }
 }
+
+/* Chart (ECharts host) */
+.ui-chart,
+h-chart.ui-chart,
+h-chart {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: var(--ui-chart-min-height, 320px);
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.ui-chart__viewport {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.ui-chart[data-loading],
+h-chart[data-loading] {
+  cursor: wait;
+}
+
+/* Tree (Ark/Zag + virtual rows) */
+.ui-tree,
+h-tree.ui-tree,
+h-tree {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  color: var(--ui-color-text);
+  font-family: inherit;
+}
+
+.ui-tree__label {
+  margin: 0;
+  color: var(--ui-color-text-secondary);
+  font-size: var(--ui-font-size-label, 13px);
+  font-weight: 600;
+}
+
+.ui-tree__tree {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--ui-color-hairline);
+  border-radius: var(--ui-radius-panel, 12px);
+  background: var(--ui-color-surface);
+  overflow: hidden;
+}
+
+.ui-tree__viewport {
+  width: 100%;
+  min-width: 0;
+  overscroll-behavior: contain;
+}
+
+.ui-tree__virtual-spacer {
+  position: relative;
+  width: 100%;
+}
+
+.ui-tree__row {
+  box-sizing: border-box;
+}
+
+.ui-tree__node {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+  min-height: 32px;
+  padding-right: 10px;
+  /* Indent from JS: paddingLeft = (depth-1)*16 [+20 leaf gutter]. --ui-tree-depth set on node. */
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.ui-tree__node:hover {
+  background: var(--ui-color-primary-soft);
+}
+
+/* Selection only — do not treat data-state=open/closed as selected */
+.ui-tree__node[data-selected] {
+  background: var(--ui-color-primary-soft);
+  color: var(--ui-color-sidebar-active-fg, var(--ui-color-primary));
+  font-weight: 600;
+}
+
+.ui-tree__node[data-focus],
+.ui-tree__node:focus-visible {
+  outline: 2px solid var(--ui-color-primary-focus);
+  outline-offset: -2px;
+}
+
+.ui-tree__node[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ui-tree__indicator {
+  display: inline-flex;
+  flex: 0 0 16px;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  min-width: 16px;
+  color: var(--ui-color-muted);
+}
+
+/* Leaf keeps the same column as branch chevron so labels share one vertical edge */
+.ui-tree__indicator--leaf {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.ui-tree__chevron {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.ui-tree__text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+}

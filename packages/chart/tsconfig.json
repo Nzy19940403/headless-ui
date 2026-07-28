@@ -1,11 +1,11 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "jsx": "react-jsx",
     "outDir": "dist",
     "composite": true,
-    "declaration": true
+    "declaration": true,
+    "lib": ["ES2022", "DOM"]
   },
-  "references": [{ "path": "../core" }, { "path": "../chart" }],
+  "references": [{ "path": "../core" }],
   "include": ["src"]
 }

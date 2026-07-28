@@ -253,17 +253,34 @@ h1 {
 
 .preview {
   display: flex;
+  flex-direction: column; /* stack demos vertically; avoid row-squeezing wide widgets */
   min-height: 120px;
+  width: 100%;
+  min-width: 0;
   align-items: stretch;
-  justify-content: stretch;
+  justify-content: flex-start;
 }
 
 .demo-stack {
   display: flex;
   width: 100%;
+  min-width: 0;
   flex-direction: column;
   align-items: stretch;
   gap: 12px;
+}
+
+/* Chart demos: grid cells must allow charts to measure full width */
+.adapter-card .preview,
+.adapter-card .demo-stack {
+  width: 100%;
+  min-width: 0;
+}
+
+.adapter-card .ui-chart,
+.adapter-card h-chart {
+  width: 100%;
+  min-width: 0;
 }
 
 .demo-result {
@@ -1449,4 +1466,670 @@ h1 {
     margin: -8px;
     border-radius: 12px;
   }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Stripe-inspired Payments Dashboard                                        */
+/* -------------------------------------------------------------------------- */
+
+.payments-shell {
+  --pm-bg: #f6f9fc;
+  --pm-surface: #ffffff;
+  --pm-text: #1a1f36;
+  --pm-text-secondary: #5b677d;
+  --pm-muted: #8896ae;
+  --pm-hairline: #e3e8ef;
+  --pm-primary: #635bff;
+  --pm-primary-soft: #e9e8ff;
+  --pm-success: #0f973c;
+  --pm-danger: #e53e3e;
+  --pm-warning: #d97706;
+  display: grid;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.payments-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.payments-header__kicker {
+  color: var(--pm-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.payments-header__title {
+  margin: 4px 0 0;
+  color: var(--pm-text);
+  font-size: clamp(28px, 4vw, 36px);
+  font-weight: 650;
+  letter-spacing: -0.03em;
+}
+
+.payments-range {
+  margin-bottom: 4px;
+}
+
+.payments-range__hint {
+  color: var(--pm-muted);
+  font-size: 13px;
+}
+
+.payments-kpi {
+  min-height: 116px;
+  padding: 16px 18px;
+  border-color: var(--pm-hairline);
+  border-top: 3px solid var(--pm-primary);
+  background: var(--pm-surface);
+}
+
+.payments-kpi__label {
+  color: var(--pm-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.payments-kpi__value {
+  display: block;
+  margin: 8px 0 6px;
+  color: var(--pm-text);
+  font-size: 28px;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.payments-kpi__sub {
+  color: var(--pm-muted);
+  font-size: 12px;
+}
+
+.payments-chart-card {
+  padding: 18px 20px;
+  border-color: var(--pm-hairline);
+  background: var(--pm-surface);
+}
+
+.payments-chart-card__label {
+  color: var(--pm-text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.payments-chart-card__title {
+  margin: 0;
+  color: var(--pm-text);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.payments-table-card {
+  padding: 18px 20px;
+  border-color: var(--pm-hairline);
+  background: var(--pm-surface);
+}
+
+.payments-table-card__head {
+  margin-bottom: 14px;
+}
+
+.payments-table-card__label {
+  color: var(--pm-text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.payments-table-card h2 {
+  margin: 0;
+  color: var(--pm-text);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.payments-shell .ui-chart {
+  --ui-chart-height: 280px;
+}
+
+.payments-shell .ui-button--primary {
+  background: var(--pm-primary);
+  color: #fff;
+}
+
+.payments-shell .ui-button--primary:hover {
+  background: #4f46e5;
+}
+
+.payments-shell .ui-button--secondary {
+  border-color: var(--pm-hairline);
+  background: var(--pm-surface);
+  color: var(--pm-text);
+}
+
+.payments-shell .ui-card {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.payments-shell .ui-table__scroll {
+  border-color: var(--pm-hairline);
+}
+
+.payments-shell .ui-table__thead {
+  background: var(--pm-bg);
+}
+
+.payments-shell .ui-table__th {
+  color: var(--pm-text-secondary);
+}
+
+.payments-shell .ui-table__tbody .ui-table__tr:hover .ui-table__td {
+  background: var(--pm-primary-soft);
+}
+
+.payments-shell .ui-table__page-btn {
+  border-color: var(--pm-hairline);
+  color: var(--pm-text);
+}
+
+.payments-shell .ui-table__page-btn:hover:not(:disabled) {
+  border-color: var(--pm-primary);
+  color: var(--pm-primary);
+}
+
+.payments-shell .ui-table__cell--datetime {
+  color: var(--pm-muted);
+}
+
+.payments-shell .ui-progress__track {
+  background: var(--pm-hairline);
+}
+
+.payments-shell .ui-progress__range {
+  background: var(--pm-primary);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Vercel-inspired Analytics Dashboard                                        */
+/* -------------------------------------------------------------------------- */
+
+.vercel-shell {
+  --vercel-bg: var(--ui-color-canvas-soft, #fafbfc);
+  --vercel-surface: var(--ui-color-surface, #ffffff);
+  --vercel-text: var(--ui-color-text, #000);
+  --vercel-text-secondary: var(--ui-color-text-secondary, #666);
+  --vercel-muted: var(--ui-color-muted, #999);
+  --vercel-hairline: var(--ui-color-hairline, #eaeaea);
+  --vercel-accent: var(--ui-color-text, #000);
+  --vercel-accent-blue: var(--ui-color-primary, #0070f3);
+  --vercel-accent-green: #50e3c2;
+  min-height: calc(100vh - 96px);
+  margin: -48px -40px;
+  background: var(--vercel-bg);
+  display: flex;
+  flex-direction: column;
+  font-family: var(--ui-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+}
+
+/* Top bar */
+.vercel-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  height: 52px;
+  background: var(--vercel-surface);
+  border-bottom: 1px solid var(--vercel-hairline);
+  flex-shrink: 0;
+}
+
+.vercel-topbar__left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vercel-topbar__brand {
+  display: flex;
+  align-items: center;
+  color: var(--vercel-text);
+}
+
+.vercel-topbar__sep {
+  color: var(--vercel-muted);
+  font-size: 16px;
+}
+
+.vercel-topbar__project {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--vercel-text);
+}
+
+.vercel-topbar__env {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #e8e8e8;
+  color: var(--vercel-text-secondary);
+}
+
+.vercel-topbar__right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vercel-topbar__search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.vercel-topbar__search-icon {
+  position: absolute;
+  left: 10px;
+  color: var(--vercel-muted);
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.vercel-topbar__search-input {
+  width: 180px;
+  min-height: 32px;
+  padding: 0 10px 0 28px;
+  border: 1px solid var(--vercel-hairline);
+  border-radius: 6px;
+  background: var(--vercel-bg);
+  color: var(--vercel-text);
+  font-size: 13px;
+  outline: none;
+}
+
+.vercel-topbar__search-input:focus {
+  border-color: var(--vercel-accent-blue);
+}
+
+/* Tabs area */
+.vercel-tabs {
+  padding: 16px 24px;
+  flex: 1;
+}
+
+.vercel-tabs [data-scope='tabs'][data-part='list'] {
+  border-bottom: 1px solid var(--vercel-hairline);
+  margin-bottom: 20px;
+}
+
+.vercel-tabs [data-scope='tabs'][data-part='trigger'] {
+  height: 40px;
+  font-size: 14px;
+  color: var(--vercel-muted);
+  padding: 0 16px;
+}
+
+.vercel-tabs [data-scope='tabs'][data-part='trigger'][data-state='active'] {
+  color: var(--vercel-text);
+  border-bottom-color: var(--vercel-text);
+}
+
+/* KPI cards */
+.vercel-kpi {
+  padding: 16px 18px;
+  border: 1px solid var(--vercel-hairline);
+  border-radius: 8px;
+  background: var(--vercel-surface);
+}
+
+.vercel-kpi__label {
+  color: var(--vercel-muted);
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.vercel-kpi__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.vercel-kpi__value {
+  color: var(--vercel-text);
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Chart card */
+.vercel-chart-card {
+  padding: 18px 20px;
+  border: 1px solid var(--vercel-hairline);
+  border-radius: 8px;
+  background: var(--vercel-surface);
+}
+
+.vercel-chart-card__label {
+  color: var(--vercel-muted);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.vercel-chart-card h2 {
+  margin: 0;
+  color: var(--vercel-text);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.vercel-chart-card__legend {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--vercel-muted);
+}
+
+.vercel-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.vercel-legend-dot--blue { background: var(--vercel-accent-blue); }
+.vercel-legend-dot--green { background: var(--vercel-accent-green); }
+
+.vercel-legend-label {
+  font-size: 12px;
+  color: var(--vercel-text-secondary);
+}
+
+/* Real-time card */
+.vercel-realtime-card {
+  padding: 16px 18px;
+  border: 1px solid var(--vercel-hairline);
+  border-radius: 8px;
+  background: var(--vercel-surface);
+}
+
+.vercel-realtime-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  display: inline-block;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.vercel-realtime-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--vercel-text);
+}
+
+.vercel-realtime-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.vercel-realtime-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--vercel-hairline);
+}
+
+.vercel-realtime-row:last-child {
+  border-bottom: 0;
+}
+
+.vercel-realtime-path {
+  display: block;
+  color: var(--vercel-text);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.vercel-realtime-user {
+  display: block;
+  color: var(--vercel-muted);
+  font-size: 11px;
+}
+
+.vercel-realtime-time {
+  color: var(--vercel-muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Card with header */
+.vercel-card-head {
+  padding: 18px 20px;
+  border: 1px solid var(--vercel-hairline);
+  border-radius: 8px;
+  background: var(--vercel-surface);
+}
+
+.vercel-card-head h2 {
+  margin: 0;
+  color: var(--vercel-text);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.vercel-card-head h3 {
+  margin: 0;
+  color: var(--vercel-text);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Deployments */
+.vercel-deploy-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.vercel-deploy-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--vercel-hairline);
+}
+
+.vercel-deploy-row:last-child {
+  border-bottom: 0;
+}
+
+.vercel-deploy-status {
+  flex-shrink: 0;
+}
+
+.vercel-deploy-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: block;
+}
+
+.vercel-deploy-dot--ready { background: #22c55e; }
+.vercel-deploy-dot--building { background: #f59e0b; }
+.vercel-deploy-dot--error { background: #ef4444; }
+
+.vercel-deploy-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.vercel-deploy-top {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.vercel-deploy-branch {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--vercel-accent-blue);
+}
+
+.vercel-deploy-commit {
+  font-size: 13px;
+  color: var(--vercel-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vercel-deploy-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--vercel-muted);
+}
+
+/* Referrer bars */
+.vercel-referrers {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.vercel-referrer-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vercel-referrer-name {
+  width: 160px;
+  font-size: 13px;
+  color: var(--vercel-text);
+  flex-shrink: 0;
+}
+
+.vercel-referrer-bar-wrap {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--vercel-hairline);
+  overflow: hidden;
+}
+
+.vercel-referrer-bar {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--vercel-accent-blue);
+  transition: width 0.3s;
+}
+
+.vercel-referrer-bar--alt {
+  background: #50e3c2;
+}
+
+.vercel-referrer-pct {
+  width: 40px;
+  text-align: right;
+  font-size: 13px;
+  color: var(--vercel-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Settings */
+.vercel-settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--vercel-hairline);
+  font-size: 14px;
+  color: var(--vercel-text);
+}
+
+.vercel-settings-row:last-child {
+  border-bottom: 0;
+}
+
+.vercel-settings-value {
+  color: var(--vercel-text-secondary);
+  font-size: 14px;
+}
+
+/* Overrides */
+.vercel-shell .ui-select {
+  min-width: 130px;
+}
+
+.vercel-shell .ui-button--primary {
+  background: var(--vercel-text);
+  color: #fff;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.vercel-shell .ui-button--secondary {
+  border-color: var(--vercel-hairline);
+  background: var(--vercel-surface);
+  color: var(--vercel-text);
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.vercel-shell .ui-card {
+  box-shadow: none;
+  border-radius: 8px;
+}
+
+.vercel-shell .ui-table__scroll {
+  border: 1px solid var(--vercel-hairline);
+  border-radius: 8px;
+}
+
+.vercel-shell .ui-table__thead {
+  background: var(--vercel-bg);
+}
+
+.vercel-shell .ui-table__th {
+  color: var(--vercel-muted);
+  font-size: 12px;
+}
+
+.vercel-shell .ui-table__tbody .ui-table__tr:hover .ui-table__td {
+  background: #f5f5f5;
+}
+
+.vercel-shell .ui-table__page-btn {
+  border-color: var(--vercel-hairline);
+  color: var(--vercel-text);
+}
+
+.vercel-shell .ui-tag {
+  border-radius: 4px;
+  font-size: 11px;
 }

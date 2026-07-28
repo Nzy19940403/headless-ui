@@ -25,6 +25,8 @@ React、Vue 和 Web Component 的命名、默认值、状态属性和事件 payl
 | Separator | `packages/core/src/separator-contract.ts` |
 | DatePicker | `packages/core/src/date-picker-contract.ts` |
 | Table | `packages/core/src/table-contract.ts` |
+| Chart | `packages/core/src/chart-contract.ts` |
+| Tree | `packages/core/src/tree-contract.ts` |
 | Container / Stack / VStack / Grid / Split / Spacer | `packages/core/src/layout-contract.ts` |
 | 公共 | `packages/core/src/shared.ts`（如 `ComponentContent`） |
 
@@ -77,6 +79,8 @@ React、Vue 和 Web Component 的命名、默认值、状态属性和事件 payl
 | Separator | `HSeparator` | `HSeparator` | `h-separator` |
 | DatePicker | `HDatePicker` | `HDatePicker` | `h-date-picker` |
 | Table | `HTable` | `HTable` | `h-table` |
+| Chart | `HChart` | `HChart` | `h-chart` |
+| Tree | `HTree` | `HTree` | `h-tree` |
 | Container | `HContainer` | `HContainer` | `h-container` |
 | Stack | `HStack` | `HStack` | `h-stack` |
 | VStack | `HVStack` | `HVStack` | `h-v-stack` |

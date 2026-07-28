@@ -39,6 +39,18 @@ const navGroups: NavGroup[] = [
         description: 'Komatsu blue Smart Construction desk.',
         page: lazy(() => import('./views/admin-komatsu')),
       },
+      {
+        path: 'payments',
+        title: 'Payments · Stripe',
+        description: 'Stripe-inspired payment overview dashboard.',
+        page: lazy(() => import('./views/payments')),
+      },
+      {
+        path: 'linear',
+        title: 'Analytics · Vercel',
+        description: 'Vercel-inspired analytics dashboard with charts and tables.',
+        page: lazy(() => import('./views/linear')),
+      },
     ],
   },
   {
@@ -100,6 +112,18 @@ const navGroups: NavGroup[] = [
         title: 'Table',
         description: 'TanStack Table shell.',
         page: lazy(() => import('./views/table')),
+      },
+      {
+        path: 'chart',
+        title: 'Chart',
+        description: 'ECharts shell (line / bar / pie / area / gauge).',
+        page: lazy(() => import('./views/chart')),
+      },
+      {
+        path: 'tree',
+        title: 'Tree',
+        description: 'Ark TreeView + TanStack Virtual.',
+        page: lazy(() => import('./views/tree')),
       },
     ],
   },

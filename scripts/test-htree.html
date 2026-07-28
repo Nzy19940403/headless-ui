@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <head><meta charset="utf-8" /><title>h-tree smoke</title></head>
+  <body>
+    <h-tree id="t" label="test" height="360" virtual="true" default-expanded-value='["s1"]'></h-tree>
+    <pre id="log"></pre>
+    <script type="module">
+      const log = (m) => {
+        document.getElementById('log').textContent += m + '\n'
+        console.log(m)
+      }
+      try {
+        await import('/packages/web-components/src/index.ts')
+        log('import ok, registered=' + !!customElements.get('h-tree'))
+        const el = document.getElementById('t')
+        el.nodes = [
+          { id: 's1', label: 'Site 1', children: [{ id: 'a', label: 'Area' }] },
+          { id: 's2', label: 'Site 2' },
+        ]
+        el.refresh?.()
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
+        const spacer = el.querySelector('.ui-tree__virtual-spacer')
+        log('spacer children=' + (spacer?.childElementCount ?? 'no-spacer'))
+        log('html=' + (spacer?.innerHTML?.slice(0, 200) ?? ''))
+      } catch (e) {
+        log('ERR ' + e.stack)
+      }
+    </script>
+  </body>
+</html>

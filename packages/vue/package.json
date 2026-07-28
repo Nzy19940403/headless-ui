@@ -6,7 +6,9 @@
   "types": "dist/index.d.ts",
   "dependencies": {
     "@ark-ui/vue": "^5.37.2",
-    "@demo/ui-core": "*"
+    "@demo/ui-chart": "*",
+    "@demo/ui-core": "*",
+    "@tanstack/vue-virtual": "^3.13.0"
   },
   "peerDependencies": {
     "vue": ">=3"

@@ -8,6 +8,7 @@
     "baseUrl": "./",
     "paths": {
       "@demo/ui-core": ["packages/core/src"],
+      "@demo/ui-chart": ["packages/chart/src"],
       "@demo/ui-react": ["packages/react/src"],
       "@demo/ui-vue": ["packages/vue/src"],
       "@demo/ui-web-components": ["packages/web-components/src"],
@@ -17,6 +18,7 @@
   "files": [],
   "references": [
     { "path": "./packages/core" },
+    { "path": "./packages/chart" },
     { "path": "./packages/react" },
     { "path": "./packages/vue" },
     { "path": "./packages/web-components" }

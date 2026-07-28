@@ -8,6 +8,6 @@
     "experimentalDecorators": true,
     "useDefineForClassFields": false
   },
-  "references": [{ "path": "../core" }],
+  "references": [{ "path": "../core" }, { "path": "../chart" }],
   "include": ["src/**/*.ts"]
 }

@@ -78,6 +78,40 @@ declare global {
       'h-slider': CustomElementProps
       'h-date-picker': CustomElementProps
       'h-table': CustomElementProps
+      'h-tree': CustomElementProps & {
+        nodes?: string | unknown[]
+        label?: string
+        'selection-mode'?: string
+        'expanded-value'?: string
+        'selected-value'?: string
+        'default-expanded-value'?: string
+        'default-selected-value'?: string
+        'row-height'?: string | number
+        overscan?: string | number
+        virtual?: boolean | string
+        'expand-on-click'?: boolean | string
+        onExpandedChange?: (detail: { expandedValue: string[] }) => void
+        onSelectionChange?: (detail: { selectedValue: string[] }) => void
+      }
+      'h-chart': CustomElementProps & {
+        type?: string
+        categories?: string | string[]
+        series?: string | unknown[]
+        data?: string | unknown[]
+        'empty-text'?: string
+        legend?: boolean | string
+        smooth?: boolean | string
+        stack?: boolean | string
+        unit?: string
+        loading?: boolean | string
+        onChartClick?: (detail: {
+          name?: string
+          value?: number | string | unknown[]
+          seriesName?: string
+          dataIndex?: number
+          seriesIndex?: number
+        }) => void
+      }
       'h-badge': CustomElementProps
       'h-avatar': CustomElementProps
       'h-tooltip': CustomElementProps

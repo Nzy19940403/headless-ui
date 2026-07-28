@@ -24,6 +24,9 @@ export type DetailEventName =
   | 'visible-range-change'
   | 'sorting-change'
   | 'pagination-change'
+  | 'chart-click'
+  | 'expanded-change'
+  | 'selection-change'
 
 export function emitDetail<T>(
   host: HTMLElement,
@@ -66,6 +69,9 @@ export function upgradeDetailHandlerProperties(host: HTMLElement) {
   upgradeProperty(host, 'onVisibleRangeChange')
   upgradeProperty(host, 'onSortingChange')
   upgradeProperty(host, 'onPaginationChange')
+  upgradeProperty(host, 'onChartClick')
+  upgradeProperty(host, 'onExpandedChange')
+  upgradeProperty(host, 'onSelectionChange')
 }
 
 /**

@@ -25,6 +25,8 @@ This directory contains offline documentation snapshots for AI agents (Ark UI, Z
 | TanStack Table Lit / vanilla | `tanstack-table/docs/framework/lit/lit-table.md`, `tanstack-table/docs/vanilla.md` |
 | TanStack Table core API | `tanstack-table/docs/api/core/*.md` |
 | Implement / review **HTable** | `tanstack-table/llms.txt` + `docs/api/table/README.md` + `packages/core/src/table-contract.ts` |
+| Implement / review **HChart** | `docs/api/chart/README.md` + `packages/core/src/chart-contract.ts` + `packages/chart/src/*` |
+| Implement / review **HTree** | `docs/api/tree/README.md` + `packages/core/src/tree-contract.ts` + Ark TreeView virtualization docs |
 | Implement / review **layout primitives** | `docs/api/layout/README.md` + `packages/core/src/layout-contract.ts` |
 
 ## Implementation rule

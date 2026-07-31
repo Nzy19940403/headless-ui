@@ -24,7 +24,16 @@ function parseItems(raw: unknown): Item[] {
  * State owner: Zag radio-group
  */
 export class HSegmentGroup extends HTMLElement {
-  static observedAttributes = ['value', 'default-value', 'disabled', 'name', 'label', 'items']
+  static observedAttributes = [
+    'value',
+    'default-value',
+    'disabled',
+    'name',
+    'label',
+    'items',
+    'full-width',
+    'size',
+  ]
 
   private itemsCache: Item[] = []
   private service?: VanillaMachine<any>
@@ -56,12 +65,39 @@ export class HSegmentGroup extends HTMLElement {
 
   connectedCallback() {
     upgradeDetailHandlerProperties(this)
-    this.classList.add('ui-segment-group')
+    this.syncRootClass()
     if (this.bootTimer != null) return
     this.bootTimer = window.setTimeout(() => {
       this.bootTimer = null
       this.boot()
     }, 0)
+  }
+
+  private syncRootClass() {
+    const size = this.getAttribute('size') ?? 'md'
+    const fullWidth = this.hasAttribute('full-width')
+    this.classList.remove('ui-segment-group--sm', 'ui-segment-group--md', 'ui-segment-group--lg')
+    // Keep our layout classes; Zag spread may rewrite `class` — re-apply after bind.
+    const layout = [
+      'ui-segment-group',
+      `ui-segment-group--${size}`,
+      fullWidth ? 'ui-segment-group--full-width' : '',
+    ]
+      .filter(Boolean)
+      .join(' ')
+    for (const token of layout.split(/\s+/)) {
+      if (token) this.classList.add(token)
+    }
+    this.toggleAttribute('data-full-width', fullWidth)
+    this.setAttribute('data-size', size)
+    this.toggleAttribute('data-disabled', this.hasAttribute('disabled'))
+    if (fullWidth) {
+      this.style.width = '100%'
+      this.style.alignSelf = 'stretch'
+    } else {
+      this.style.removeProperty('width')
+      this.style.removeProperty('align-self')
+    }
   }
 
   disconnectedCallback() {
@@ -82,6 +118,10 @@ export class HSegmentGroup extends HTMLElement {
     if (!this.service) return
     if (name === 'label') {
       this.syncLabel()
+      return
+    }
+    if (name === 'full-width' || name === 'size') {
+      this.rebuild()
       return
     }
     if (name === 'value') {
@@ -153,6 +193,7 @@ export class HSegmentGroup extends HTMLElement {
   }
 
   private rebuild() {
+    this.syncRootClass()
     this.renderMarkup()
     this.bindBehavior()
     this.project()
@@ -171,9 +212,17 @@ export class HSegmentGroup extends HTMLElement {
       this.append(label)
     }
 
+    const fullWidth = this.hasAttribute('full-width')
     const list = document.createElement('div')
-    list.className = 'ui-segment-group__items'
+    list.className = fullWidth
+      ? 'ui-segment-group__items ui-segment-group__items--full-width'
+      : 'ui-segment-group__items'
     list.dataset.part = 'items'
+    list.dataset.size = this.getAttribute('size') ?? 'md'
+    if (fullWidth) {
+      list.style.width = '100%'
+      list.style.display = 'flex'
+    }
 
     for (const item of items) {
       const row = document.createElement('label')
@@ -189,6 +238,11 @@ export class HSegmentGroup extends HTMLElement {
       control.className = 'ui-segment__control'
       const input = document.createElement('input')
       input.dataset.part = 'item-hidden-input'
+      input.type = 'radio'
+      input.name = this.getAttribute('name') ?? this.groupId
+      input.disabled = Boolean(item.disabled || this.hasAttribute('disabled'))
+      row.toggleAttribute('data-disabled', Boolean(item.disabled || this.hasAttribute('disabled')))
+      row.setAttribute('aria-disabled', String(Boolean(item.disabled || this.hasAttribute('disabled'))))
       row.append(text, control, input)
       list.append(row)
     }
@@ -226,15 +280,20 @@ export class HSegmentGroup extends HTMLElement {
       this.bindCleanups.push(spreadProps(el, props))
     }
     bind(this, api.getRootProps() as Record<string, unknown>)
+    // Zag may overwrite class — restore layout classes / width after spread.
+    this.syncRootClass()
     const label = this.querySelector(':scope > [data-part="label"]')
     if (label) bind(label, api.getLabelProps() as Record<string, unknown>)
+    const groupDisabled = this.hasAttribute('disabled')
     this.querySelectorAll('[data-part="item"]').forEach(item => {
       const value = (item as HTMLElement).dataset.value
       if (!value) return
-      bind(item, api.getItemProps({ value }) as Record<string, unknown>)
-      bind(item.querySelector('[data-part="item-text"]'), api.getItemTextProps({ value }) as Record<string, unknown>)
-      bind(item.querySelector('[data-part="item-control"]'), api.getItemControlProps({ value }) as Record<string, unknown>)
-      bind(item.querySelector('[data-part="item-hidden-input"]'), api.getItemHiddenInputProps({ value }) as Record<string, unknown>)
+      const row = this.itemsCache.find(i => i.value === value)
+      const key = { value, disabled: Boolean(row?.disabled || groupDisabled) }
+      bind(item, api.getItemProps(key) as Record<string, unknown>)
+      bind(item.querySelector('[data-part="item-text"]'), api.getItemTextProps(key) as Record<string, unknown>)
+      bind(item.querySelector('[data-part="item-control"]'), api.getItemControlProps(key) as Record<string, unknown>)
+      bind(item.querySelector('[data-part="item-hidden-input"]'), api.getItemHiddenInputProps(key) as Record<string, unknown>)
     })
     const indicator = this.querySelector('[data-part="indicator"]')
     if (indicator && 'getIndicatorProps' in api) {
@@ -251,6 +310,8 @@ export class HSegmentGroup extends HTMLElement {
       const state = api.getItemState({ value })
       const checked = state.checked
       item.setAttribute('data-state', checked ? 'checked' : 'unchecked')
+      item.toggleAttribute('data-disabled', state.disabled)
+      item.setAttribute('aria-disabled', String(state.disabled))
       item.classList.toggle('is-checked', checked)
       const control = item.querySelector('[data-part="item-control"]')
       control?.setAttribute('data-state', checked ? 'checked' : 'unchecked')

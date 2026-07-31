@@ -1,20 +1,22 @@
 import type { ValueChangeHandler, ValueChangeDetails } from './tabs-contract'
 
-export interface SelectItemContract {
-  value: string
+export interface SelectItemContract<V = string | number> {
+  value: V
   label: string
   disabled?: boolean
 }
 
-export interface SelectContract {
-  items: SelectItemContract[]
-  value?: string
-  defaultValue?: string
+export interface SelectContract<V = string | number> {
+  items: SelectItemContract<V>[]
+  value?: V
+  defaultValue?: V
   placeholder?: string
   disabled?: boolean
   name?: string
   label?: string
-  onValueChange?: ValueChangeHandler
+  error?: string
+  helperText?: string
+  onValueChange?: ValueChangeHandler<V>
 }
 
 export type { ValueChangeDetails }

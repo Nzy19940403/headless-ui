@@ -61,14 +61,15 @@ export function stackClassName(
   className?: string,
   wrap?: boolean,
 ): string {
-  return [
-    base,
-    wrap ? `${base}--wrap` : '',
-    props.reverse ? `${base}--reverse` : '',
-    className,
-  ]
-    .filter(Boolean)
-    .join(' ')
+  const stackBelow =
+    'stackBelow' in props ? (props.stackBelow as string | undefined) : undefined
+  const parts: string[] = [base]
+  if (wrap) parts.push(`${base}--wrap`)
+  if (stackBelow && stackBelow !== 'never') parts.push(`${base}--stack-below-${stackBelow}`)
+  if (props.reverse) parts.push(`${base}--reverse`)
+  if ('fillHeight' in props && props.fillHeight) parts.push(`${base}--fill-height`)
+  if (className) parts.push(className)
+  return parts.join(' ')
 }
 
 export function gridStyle(props: GridContract): LayoutStyleMap {

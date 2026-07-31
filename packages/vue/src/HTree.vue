@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue'
-import { useVirtualizer } from '@tanstack/vue-virtual'
+import { useVirtualizer, type Virtualizer } from '@tanstack/vue-virtual'
 import {
   TreeViewRootProvider,
   TreeViewLabel,
@@ -68,7 +68,7 @@ const emit = defineEmits<{
 const scrollEl = ref<HTMLDivElement | null>(null)
 const expandedLocal = ref<string[]>([...(props.expandedValue ?? props.defaultExpandedValue ?? [])])
 const selectedLocal = ref<string[]>([...(props.selectedValue ?? props.defaultSelectedValue ?? [])])
-const virtualizerApi = ref<{ scrollToIndex: (i: number, opts?: { align?: string }) => void } | null>(null)
+const virtualizerApi = ref<Virtualizer<HTMLDivElement, Element> | null>(null)
 
 watch(
   () => props.expandedValue,

@@ -9,13 +9,14 @@ export function HStack({
   align = 'stretch',
   justify = 'start',
   wrap = false,
+  stackBelow = 'never',
   reverse = false,
   className,
   style,
   children,
   ...props
 }: HStackProps) {
-  const contract = { gap, align, justify, wrap, reverse }
+  const contract = { gap, align, justify, wrap, stackBelow, reverse }
   return (
     <div
       {...props}

@@ -5,20 +5,21 @@
     "moduleResolution": "Bundler",
     "strict": true,
     "skipLibCheck": true,
-    "baseUrl": "./",
     "paths": {
-      "@demo/ui-core": ["packages/core/src"],
-      "@demo/ui-chart": ["packages/chart/src"],
-      "@demo/ui-react": ["packages/react/src"],
-      "@demo/ui-vue": ["packages/vue/src"],
-      "@demo/ui-web-components": ["packages/web-components/src"],
-      "@demo/ui-theme": ["packages/theme/src/index.css"]
+      "@demo/ui-core": ["./packages/core/src"],
+      "@demo/ui-chart": ["./packages/chart/src"],
+      "@demo/ui-form": ["./packages/form/src"],
+      "@demo/ui-react": ["./packages/react/src"],
+      "@demo/ui-vue": ["./packages/vue/src"],
+      "@demo/ui-web-components": ["./packages/web-components/src"],
+      "@demo/ui-theme": ["./packages/theme/src/index.css"]
     }
   },
   "files": [],
   "references": [
     { "path": "./packages/core" },
     { "path": "./packages/chart" },
+    { "path": "./packages/form" },
     { "path": "./packages/react" },
     { "path": "./packages/vue" },
     { "path": "./packages/web-components" }

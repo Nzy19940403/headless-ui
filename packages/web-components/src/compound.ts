@@ -24,6 +24,8 @@ export type DetailEventName =
   | 'visible-range-change'
   | 'sorting-change'
   | 'pagination-change'
+  | 'column-sizing-change'
+  | 'column-order-change'
   | 'chart-click'
   | 'expanded-change'
   | 'selection-change'
@@ -64,14 +66,16 @@ export function upgradeDetailHandlerProperties(host: HTMLElement) {
   upgradeProperty(host, 'onValueChange')
   upgradeProperty(host, 'onCheckedChange')
   upgradeProperty(host, 'onOpenChange')
+  upgradeProperty(host, 'onExpandedChange')
+  upgradeProperty(host, 'onSelectionChange')
   upgradeProperty(host, 'onFocusChange')
   upgradeProperty(host, 'onViewChange')
   upgradeProperty(host, 'onVisibleRangeChange')
   upgradeProperty(host, 'onSortingChange')
   upgradeProperty(host, 'onPaginationChange')
+  upgradeProperty(host, 'onColumnSizingChange')
+  upgradeProperty(host, 'onColumnOrderChange')
   upgradeProperty(host, 'onChartClick')
-  upgradeProperty(host, 'onExpandedChange')
-  upgradeProperty(host, 'onSelectionChange')
 }
 
 /**

@@ -23,8 +23,41 @@
   --ui-color-control-muted: #263040;
   --ui-color-control-border: #263040;
 
+  /* Compact production-system input/select surface. */
+  --ui-input-border: #168eff;
+  --ui-input-radius: 3px;
+  --ui-input-bg: #030b20;
+  --ui-input-text: #d6e7ff;
+  --ui-input-placeholder: #84a0c7;
+  --ui-select-indicator: #1398ff;
+  --ui-select-placeholder: #84a0c7;
+  --ui-select-open-border: #168eff;
+  --ui-select-open-ring: rgba(22, 142, 255, 0.16);
+  --ui-select-popup-border: #168eff;
+  --ui-select-popup-bg: #030b20;
+  --ui-select-item-text: #d6e7ff;
+  --ui-select-item-highlight-bg: #15467e;
+  --ui-select-item-highlight-text: #ffffff;
+  --ui-select-item-selected-bg: #15467e;
+  --ui-select-item-selected-text: #ffffff;
+  --ui-select-item-indicator: #1398ff;
+  --ui-tree-select-content-bg: #030b20;
+  --ui-tree-select-menu-border: #2a3038;
+  --ui-tree-select-node-text: #b0bcc2;
+  --ui-tree-select-node-active-bg: #15467e;
+  --ui-tree-select-node-active-text: #ffffff;
+  --ui-tree-select-node-selected-bg: #15467e;
+  --ui-tree-select-node-selected-text: #ffffff;
+  --ui-tree-select-radio-border: #b0bcc2;
+  --ui-tree-select-radio-selected: #1398ff;
+  --ui-tree-select-radio-fill: #030b20;
+  --ui-tree-select-indicator: #1398ff;
+  --ui-tree-select-scrollbar: #3b4654;
+
   --ui-color-surface: #141e2d;
   --ui-color-surface-muted: #182436;
+  --ui-table-row-hover-bg: #1d3454;
+  --ui-table-pinned-hover-bg: #1d3454;
   --ui-color-canvas: #141e2d;
   --ui-color-canvas-soft: #0b121c;
   --ui-color-sidebar: #111a28;
@@ -69,6 +102,16 @@
   --ui-control-height: 30px;
   --ui-control-height-sm: 24px;
   --ui-control-height-lg: 36px;
+
+  /* The source production system uses a compact red-off switch. */
+  --ui-switch-off: #ff4949;
+  --ui-switch-off-thumb: #030b21;
+  --ui-switch-width: 40px;
+  --ui-switch-height: 20px;
+  --ui-switch-thumb-size: 16px;
+  --ui-switch-thumb-translate: 18px;
+  --ui-switch-direction: row-reverse;
+  --ui-switch-gap: 0px;
 
   --ui-transition-fast: 0.12s;
 }

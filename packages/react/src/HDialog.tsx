@@ -16,17 +16,20 @@ export function HDialog({
   description,
   children,
   onOpenChange,
+  lazyMount = true,
+  unmountOnExit = true,
+  skipAnimationOnMount = false,
   ...props
 }: HDialogProps) {
   return (
     <ArkDialog.Root
       {...props}
       onOpenChange={onOpenChange}
-      lazyMount
-      unmountOnExit
-      skipAnimationOnMount={false}
+      lazyMount={lazyMount}
+      unmountOnExit={unmountOnExit}
+      skipAnimationOnMount={skipAnimationOnMount}
     >
-      <ArkDialog.Trigger className="ui-button ui-button--secondary">{trigger}</ArkDialog.Trigger>
+      {trigger ? <ArkDialog.Trigger className="ui-button ui-button--secondary">{trigger}</ArkDialog.Trigger> : null}
       <ArkDialog.Backdrop className="ui-dialog__backdrop" />
       <ArkDialog.Positioner className="ui-dialog__positioner">
         <ArkDialog.Content className="dialog-content ui-dialog__content">

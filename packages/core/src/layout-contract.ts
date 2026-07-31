@@ -67,34 +67,27 @@ export interface ContainerContract {
 }
 
 export interface StackContract {
-  /**
-   * Space between children.
-   * Default: `md`.
-   */
   gap?: LayoutResponsiveValue<LayoutGap>
-  /**
-   * Cross-axis alignment.
-   * Default: `stretch`.
-   */
   align?: LayoutResponsiveValue<LayoutAlign>
-  /**
-   * Main-axis distribution.
-   * Default: `start`.
-   */
   justify?: LayoutResponsiveValue<LayoutJustify>
-  /**
-   * Allow horizontal stack children to wrap.
-   * Default: false.
-   */
   wrap?: boolean
   /**
-   * Reverse visual order without changing DOM order.
-   * Default: false.
+   * Collapse to a vertical column below this breakpoint.
+   * `md` means the HStack becomes a column on phones/tablets.
+   * Default: `never` (always horizontal).
    */
+  stackBelow?: LayoutBreakpoint | 'never'
   reverse?: boolean
 }
 
-export interface VStackContract extends Omit<StackContract, 'wrap'> {}
+export interface VStackContract {
+  gap?: LayoutResponsiveValue<LayoutGap>
+  align?: LayoutResponsiveValue<LayoutAlign>
+  justify?: LayoutResponsiveValue<LayoutJustify>
+  reverse?: boolean
+  /** Stretch to fill the block-size offered by the parent. */
+  fillHeight?: boolean
+}
 
 export interface GridContract {
   /**

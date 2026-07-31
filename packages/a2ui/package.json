@@ -1,0 +1,18 @@
+{
+  "name": "@demo/ui-a2ui",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@babel/standalone": "^8.0.4",
+    "@demo/ui-core": "*",
+    "@demo/ui-react": "*",
+    "@demo/ui-theme": "*"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.0"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  }
+}

@@ -7,6 +7,8 @@
   --ui-color-primary-focus: #c4b5fd;
   --ui-color-primary-soft: #ede9fe;
   --ui-color-surface-muted: #f1efff;
+  --ui-table-row-hover-bg: #ede9fe;
+  --ui-table-pinned-hover-bg: #ede9fe;
   --ui-color-sidebar: #f3f0ff;
   --ui-color-sidebar-hover: #ede9fe;
   --ui-color-sidebar-active-fg: #5b21b6;

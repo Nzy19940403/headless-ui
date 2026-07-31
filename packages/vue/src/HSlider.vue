@@ -21,9 +21,10 @@ function onValueChange(details: { value: number[] }) {
 </script>
 
 <template>
+  <!-- Ark Vue Slider: controlled state is modelValue (number[]), not value -->
   <Slider.Root
     class="ui-slider"
-    :value="value === undefined ? undefined : [value]"
+    :model-value="value === undefined ? undefined : [value]"
     :default-value="[defaultValue]"
     :min="min"
     :max="max"

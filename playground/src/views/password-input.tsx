@@ -55,7 +55,7 @@ export default function PasswordInputView() {
     description: 'Password with show/hide. React/WC: onValueChange({ value }).',
     reactDemo: (
       <div className="demo-stack" style={{ width: '100%' }}>
-        <HPasswordInput label="Password" value={value} onValueChange={d => setValue(d.value)} placeholder="Enter password" />
+        <HPasswordInput label="Password" value={value} onValueChange={d => setValue(d.value as string)} placeholder="Enter password" />
         <span className="demo-result">Length: {value.length}</span>
       </div>
     ),

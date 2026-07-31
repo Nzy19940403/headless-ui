@@ -19,6 +19,9 @@ export function HDrawer({
   placement = 'right',
   size = '360px',
   onOpenChange,
+  lazyMount = true,
+  unmountOnExit = true,
+  skipAnimationOnMount = false,
   ...props
 }: HDrawerProps) {
   const swipeDirection = drawerSwipeDirection(placement)
@@ -31,11 +34,11 @@ export function HDrawer({
       {...props}
       swipeDirection={swipeDirection}
       onOpenChange={onOpenChange}
-      lazyMount
-      unmountOnExit
-      skipAnimationOnMount={false}
+      lazyMount={lazyMount}
+      unmountOnExit={unmountOnExit}
+      skipAnimationOnMount={skipAnimationOnMount}
     >
-      <ArkDrawer.Trigger className="ui-button ui-button--secondary">{trigger}</ArkDrawer.Trigger>
+      {trigger ? <ArkDrawer.Trigger className="ui-button ui-button--secondary">{trigger}</ArkDrawer.Trigger> : null}
       <ArkDrawer.Backdrop className="ui-drawer__backdrop" />
       <ArkDrawer.Positioner
         className={['ui-drawer__positioner', `ui-drawer__positioner--${placement}`].join(' ')}

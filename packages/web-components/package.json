@@ -7,11 +7,14 @@
   "dependencies": {
     "@demo/ui-chart": "*",
     "@demo/ui-core": "*",
+    "@dnd-kit/dom": "^0.5.0",
+    "@tanstack/virtual-core": "^3.13.0",
     "@zag-js/accordion": "^1.42.0",
     "@zag-js/avatar": "^1.42.0",
     "@zag-js/checkbox": "^1.42.0",
     "@zag-js/dialog": "^1.42.0",
     "@zag-js/drawer": "^1.42.0",
+    "@zag-js/popover": "^1.42.0",
     "@zag-js/progress": "^1.42.0",
     "@zag-js/radio-group": "^1.42.0",
     "@zag-js/select": "^1.42.0",
@@ -20,7 +23,6 @@
     "@zag-js/tooltip": "^1.42.0",
     "@zag-js/tree-view": "^1.42.0",
     "@zag-js/vanilla": "^1.42.0",
-    "@tanstack/virtual-core": "^3.13.0",
     "lit": "^3.3.3"
   }
 }

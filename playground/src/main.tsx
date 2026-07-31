@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useState, type ComponentType, type LazyExoticComponent } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
-import { HashRouter, Navigate, NavLink, Route, Routes } from 'react-router-dom'
+import { HashRouter, Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom'
 import { arkComponentCatalog } from '@demo/ui-core'
 import '@demo/ui-web-components'
 import './style.css'
@@ -28,6 +28,12 @@ const navGroups: NavGroup[] = [
     title: 'Showcase',
     items: [
       {
+        path: 'production-operations',
+        title: '生产运营复刻',
+        description: 'Screenshot-inspired mining operations shell.',
+        page: lazy(() => import('./views/production-operations')),
+      },
+      {
         path: 'admin',
         title: 'Admin · Caterpillar',
         description: 'CAT yellow/black heavy-ops command center.',
@@ -50,6 +56,12 @@ const navGroups: NavGroup[] = [
         title: 'Analytics · Vercel',
         description: 'Vercel-inspired analytics dashboard with charts and tables.',
         page: lazy(() => import('./views/linear')),
+      },
+      {
+        path: 'engineering-quote',
+        title: '工程报价单 · MeshFlow',
+        description: 'Complex form: 7 sections, 30 DAG rules, 2 entangle pairs.',
+        page: lazy(() => import('./views/engineering-quote')),
       },
     ],
   },
@@ -84,6 +96,12 @@ const navGroups: NavGroup[] = [
         page: lazy(() => import('./views/password-input')),
       },
       { path: 'select', title: 'Select', description: 'Single select.', page: lazy(() => import('./views/select')) },
+      {
+        path: 'tree-select',
+        title: 'Tree Select',
+        description: 'Hierarchical single select.',
+        page: lazy(() => import('./views/tree-select')),
+      },
       { path: 'combobox', title: 'Combobox', description: 'Searchable select.', page: lazy(() => import('./views/combobox')) },
       { path: 'radio', title: 'Radio Group', description: 'Single choice.', page: lazy(() => import('./views/radio')) },
       {
@@ -95,6 +113,7 @@ const navGroups: NavGroup[] = [
       { path: 'checkbox', title: 'Checkbox', description: 'Boolean control.', page: lazy(() => import('./views/checkbox')) },
       { path: 'toggle', title: 'Toggle', description: 'On / off switch.', page: lazy(() => import('./views/toggle')) },
       { path: 'slider', title: 'Slider', description: 'Range control.', page: lazy(() => import('./views/slider')) },
+      { path: 'form', title: 'Form', description: 'Schema-driven linked form.', page: lazy(() => import('./views/form')) },
       {
         path: 'date-picker',
         title: 'Date Picker',
@@ -162,6 +181,12 @@ const navGroups: NavGroup[] = [
         description: 'Expand / collapse.',
         page: lazy(() => import('./views/accordion')),
       },
+      {
+        path: 'nav-menu',
+        title: 'NavMenu',
+        description: 'Ant Design-style navigation menu.',
+        page: lazy(() => import('./views/nav-menu')),
+      },
     ],
   },
 ]
@@ -174,14 +199,16 @@ const themeItems = themes.map(item => ({ value: item, label: item }))
 
 function Shell() {
   const [theme, setTheme] = useState<ThemeName>('default')
+  const location = useLocation()
+  const isReplica = location.pathname === '/production-operations'
 
   useEffect(() => {
-    document.documentElement.dataset.theme = theme
-  }, [theme])
+    document.documentElement.dataset.theme = isReplica ? 'industry-dark' : theme
+  }, [isReplica, theme])
 
   return (
-    <div className="app-shell">
-      <aside className="sidebar">
+    <div className={['app-shell', isReplica ? 'app-shell--replica' : ''].filter(Boolean).join(' ')}>
+      {!isReplica ? <aside className="sidebar">
         <p className="eyebrow">UI LIBRARY</p>
         <h2>Components</h2>
         <div className="theme-switch">
@@ -215,8 +242,8 @@ function Shell() {
             </div>
           ))}
         </nav>
-      </aside>
-      <main className="route-page">
+      </aside> : null}
+      <main className={['route-page', isReplica ? 'route-page--replica' : ''].filter(Boolean).join(' ')}>
         <Suspense fallback={<div className="loading">Loading component demo...</div>}>
           <Routes>
             {pages.map(({ path, page: Page }) => (

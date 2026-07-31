@@ -20,6 +20,10 @@ Value change events use `{ value: string }` on all stacks:
 | Vue | `value-change` / `update:value` |
 | Web Component | `value-change` CustomEvent `detail: { value }` |
 
+### Vue note
+
+Ark Vue Select uses **`modelValue: string[]`**. `HSelect` maps Core single-string `value` / `defaultValue` → `:model-value` / `:default-value` arrays. Do not bind `:value` to Ark Root or the trigger will stay on placeholder.
+
 ### Web Component notes
 
 `h-select` is implemented with **Lit + Zag select** (not native `<select>`), so open/highlight/keyboard behavior can align with React/Vue Ark Select.

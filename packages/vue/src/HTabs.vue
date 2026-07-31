@@ -9,9 +9,10 @@ const emit = defineEmits<{ 'value-change': [details: ValueChangeDetails] }>()
 </script>
 
 <template>
+  <!-- Ark Vue Tabs: controlled state is modelValue, not value -->
   <Tabs.Root
     :default-value="defaultValue"
-    :value="value"
+    :model-value="value"
     @value-change="emit('value-change', $event)"
   >
     <Tabs.List>

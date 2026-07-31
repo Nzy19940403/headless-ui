@@ -14,6 +14,7 @@ export default defineConfig({
       'react-dom': path.resolve(root, 'node_modules/react-dom'),
       '@demo/ui-core': path.resolve(root, 'packages/core/src'),
       '@demo/ui-chart': path.resolve(root, 'packages/chart/src'),
+      '@demo/ui-form': path.resolve(root, 'packages/form/src'),
       '@demo/ui-react': path.resolve(root, 'packages/react/src'),
       '@demo/ui-vue': path.resolve(root, 'packages/vue/src'),
       '@demo/ui-web-components': path.resolve(root, 'packages/web-components/src'),

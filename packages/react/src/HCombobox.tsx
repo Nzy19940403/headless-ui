@@ -1,12 +1,14 @@
 import { createListCollection, Combobox } from '@ark-ui/react/combobox'
+import { Portal } from '@ark-ui/react/portal'
 import { useMemo } from 'react'
+import { buildSelectValueMap } from '@demo/ui-core'
 import type { ComboboxContract, ValueChangeDetails } from '@demo/ui-core'
 
-export interface HComboboxProps extends ComboboxContract {
-  onValueChange?: (details: ValueChangeDetails) => void
+export interface HComboboxProps<V = string | number> extends ComboboxContract<V> {
+  onValueChange?: (details: ValueChangeDetails<V>) => void
 }
 
-export function HCombobox({
+export function HCombobox<V extends string | number = string | number>({
   items,
   value,
   defaultValue,
@@ -15,11 +17,13 @@ export function HCombobox({
   name,
   label,
   onValueChange,
-}: HComboboxProps) {
+}: HComboboxProps<V>) {
+  const valueBackmap = useMemo(() => buildSelectValueMap(items), [items])
+
   const collection = useMemo(
     () =>
       createListCollection({
-        items,
+        items: items.map(item => ({ ...item, value: String(item.value) })),
         itemToString: item => item.label,
         itemToValue: item => item.value,
       }),
@@ -32,9 +36,13 @@ export function HCombobox({
       collection={collection}
       disabled={disabled}
       name={name}
-      value={value ? [value] : undefined}
-      defaultValue={defaultValue ? [defaultValue] : undefined}
-      onValueChange={details => onValueChange?.({ value: details.value[0] ?? '' })}
+      value={value !== undefined ? [String(value)] : undefined}
+      defaultValue={defaultValue !== undefined ? [String(defaultValue)] : undefined}
+      onValueChange={details => {
+        const rawValue = details.value[0]
+        const next = rawValue !== undefined ? (valueBackmap.get(rawValue) ?? '' as V) : '' as V
+        onValueChange?.({ value: next })
+      }}
     >
       {label ? <Combobox.Label className="ui-field__label">{label}</Combobox.Label> : null}
       <Combobox.Control className="ui-combobox__control">
@@ -43,6 +51,7 @@ export function HCombobox({
           ▾
         </Combobox.Trigger>
       </Combobox.Control>
+      <Portal>
       <Combobox.Positioner>
         <Combobox.Content className="ui-combobox__content">
           {collection.items.map(item => (
@@ -53,6 +62,7 @@ export function HCombobox({
           ))}
         </Combobox.Content>
       </Combobox.Positioner>
+      </Portal>
     </Combobox.Root>
   )
 }

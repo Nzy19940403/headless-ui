@@ -14,6 +14,9 @@ Centered modal powered by **Ark UI Dialog** / **`@zag-js/dialog`**.
 | `children` / default slot | body | - |
 | `open` | `boolean` | uncontrolled when omitted |
 | `defaultOpen` | `boolean` | `false` |
+| `lazyMount` | `boolean` | `true` |
+| `unmountOnExit` | `boolean` | `true` |
+| `skipAnimationOnMount` | `boolean` | `false` |
 
 ## Events
 
@@ -33,7 +36,7 @@ Same Presence + CSS pattern as Drawer:
 
 | Stack | Mechanism |
 | --- | --- |
-| React / Vue | Ark **Presence** (`lazyMount` + `unmountOnExit`). Theme keyframes on `[data-state=open\|closed]`: backdrop fade + content scale/fade. |
+| React / Vue | Ark **Presence**; `lazyMount`, `unmountOnExit`, and `skipAnimationOnMount` are forwarded. Theme keyframes on `[data-state=open\|closed]`: backdrop fade + content scale/fade. |
 | WC | Dialog machine has **no** `closing`/`exitcomplete`. On close we keep nodes visible with `data-state=closed`, wait for **`animationend`**, then apply Zag `hidden`. |
 
 Do **not** force `display: none` on every `data-state=closed` node — only after `[hidden]` (exit finished). Codex’s drawer fix: keep visible only for `closed:not([hidden])`.

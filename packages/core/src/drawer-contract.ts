@@ -1,5 +1,6 @@
 import type { ComponentContent } from './shared'
 import type { OpenChangeDetails, OpenChangeHandler } from './dialog-contract'
+import type { PresenceContract } from './presence-contract'
 
 export type { OpenChangeDetails, OpenChangeHandler }
 
@@ -9,11 +10,17 @@ export type { OpenChangeDetails, OpenChangeHandler }
  */
 export type DrawerPlacement = 'left' | 'right' | 'top' | 'bottom'
 
-export interface DrawerContract<TContent = ComponentContent> {
-  trigger: TContent
+export interface DrawerContract<TContent = ComponentContent> extends PresenceContract {
+  trigger?: TContent
   title: TContent
   description?: TContent
   children?: TContent
+  /**
+   * When true the trigger button floats at the bottom-right of the viewport
+   * (fixed positioning) so it's always available — useful for debug panels,
+   * data inspectors, and setting drawers.
+   */
+  floatingTrigger?: boolean
   /** Controlled open state. */
   open?: boolean
   defaultOpen?: boolean

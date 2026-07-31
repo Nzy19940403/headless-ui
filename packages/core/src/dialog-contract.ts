@@ -1,4 +1,5 @@
 import type { ComponentContent } from './shared'
+import type { PresenceContract } from './presence-contract'
 
 /** Payload for open / close transitions. */
 export interface OpenChangeDetails {
@@ -7,8 +8,8 @@ export interface OpenChangeDetails {
 
 export type OpenChangeHandler = (details: OpenChangeDetails) => void
 
-export interface DialogContract<TContent = ComponentContent> {
-  trigger: TContent
+export interface DialogContract<TContent = ComponentContent> extends PresenceContract {
+  trigger?: TContent
   title: TContent
   description?: TContent
   children?: TContent

@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "paths": {
+      "@demo/ui-core": ["../packages/core/src"],
+      "@demo/ui-chart": ["../packages/chart/src"],
+      "@demo/ui-form": ["../packages/form/src"],
+      "@demo/ui-react": ["../packages/react/src"],
+      "@demo/ui-vue": ["../packages/vue/src"],
+      "@demo/ui-web-components": ["../packages/web-components/src"],
+      "@demo/ui-theme": ["../packages/theme/src/index.css"]
+    }
+  },
+  "include": ["src"]
+}

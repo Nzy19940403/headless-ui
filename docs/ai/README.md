@@ -18,6 +18,7 @@ This directory contains offline documentation snapshots for AI agents (Ark UI, Z
 | Implement or review Web Component state handling | `wc-state-source-rules.txt`, `wc-zag-spread-props-rule.txt`, then `zag-llms-full.txt` |
 | Implement or review Lit-based Web Components | `packages/web-components/src/lit-policy.md`, `wc-zag-spread-props-rule.txt`, then the component-specific Zag section |
 | Vue wrapper optional boolean / controlled prop forwarding | `vue-wrapper-prop-forwarding-rules.txt` |
+| Vue `value`/`defaultValue` 初值不渲染（modelValue 映射） | `vue-value-model-binding-rules.md` |
 | Form field contracts for future MeshFlow | `form-meshflow-ready.md` |
 | **TanStack Table** (offline) | `tanstack-table/README.md` then `tanstack-table/llms.txt` |
 | TanStack Table React adapter | `tanstack-table/docs/framework/react/react-table.md` |

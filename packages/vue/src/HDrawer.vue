@@ -8,6 +8,10 @@ const props = withDefaults(defineProps<DrawerContract<string> & { class?: string
   defaultOpen: false,
   placement: 'right',
   size: '360px',
+  floatingTrigger: false,
+  lazyMount: true,
+  unmountOnExit: true,
+  skipAnimationOnMount: false,
 })
 
 const emit = defineEmits<{ 'open-change': [details: OpenChangeDetails] }>()
@@ -17,9 +21,9 @@ const rootProps = computed(() => {
   const result: Record<string, unknown> = {
     defaultOpen: props.defaultOpen,
     swipeDirection: swipeDirection.value,
-    lazyMount: true,
-    unmountOnExit: true,
-    skipAnimationOnMount: false,
+    lazyMount: props.lazyMount,
+    unmountOnExit: props.unmountOnExit,
+    skipAnimationOnMount: props.skipAnimationOnMount,
   }
   if (props.open !== undefined) result.open = props.open
   return result
@@ -39,7 +43,10 @@ const contentClass = computed(
     v-bind="rootProps"
     @open-change="emit('open-change', $event)"
   >
-    <Drawer.Trigger class="ui-button ui-button--secondary">
+    <Drawer.Trigger
+      v-if="props.trigger"
+      :class="['ui-button', props.floatingTrigger ? 'ui-drawer__floating-trigger' : 'ui-button--secondary']"
+    >
       {{ trigger }}
     </Drawer.Trigger>
     <Drawer.Backdrop class="ui-drawer__backdrop" />

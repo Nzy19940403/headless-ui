@@ -3,6 +3,7 @@ import type { SegmentGroupContract, ValueChangeDetails } from '@demo/ui-core'
 
 export interface HSegmentGroupProps extends SegmentGroupContract {
   onValueChange?: (details: ValueChangeDetails) => void
+  className?: string
 }
 
 export function HSegmentGroup({
@@ -12,11 +13,34 @@ export function HSegmentGroup({
   disabled,
   name,
   label,
+  fullWidth = false,
+  size = 'md',
   onValueChange,
+  className,
 }: HSegmentGroupProps) {
+  const rootClass = [
+    'ui-segment-group',
+    `ui-segment-group--${size}`,
+    fullWidth ? 'ui-segment-group--full-width' : null,
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ')
+
+  const itemsClass = [
+    'ui-segment-group__items',
+    fullWidth ? 'ui-segment-group__items--full-width' : null,
+  ]
+    .filter(Boolean)
+    .join(' ')
+
   return (
     <SegmentGroup.Root
-      className="ui-segment-group"
+      className={rootClass}
+      data-full-width={fullWidth ? '' : undefined}
+      data-size={size}
+      data-disabled={disabled ? '' : undefined}
+      style={fullWidth ? { width: '100%', alignSelf: 'stretch' } : undefined}
       value={value}
       defaultValue={defaultValue}
       disabled={disabled}
@@ -24,12 +48,16 @@ export function HSegmentGroup({
       onValueChange={details => onValueChange?.({ value: details.value ?? '' })}
     >
       {label ? <SegmentGroup.Label className="ui-field__label">{label}</SegmentGroup.Label> : null}
-      <div className="ui-segment-group__items">
+      <div
+        className={itemsClass}
+        data-size={size}
+        style={fullWidth ? { width: '100%', display: 'flex' } : undefined}
+      >
         {items.map(item => (
           <SegmentGroup.Item
             key={item.value}
             value={item.value}
-            disabled={item.disabled}
+            disabled={item.disabled || disabled}
             className="ui-segment"
           >
             <SegmentGroup.ItemText className="ui-segment__text">{item.label}</SegmentGroup.ItemText>

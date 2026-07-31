@@ -8,6 +8,7 @@ const props = withDefaults(defineProps<StackContract & { class?: string }>(), {
   align: 'stretch',
   justify: 'start',
   wrap: false,
+  stackBelow: 'never',
   reverse: false,
 })
 

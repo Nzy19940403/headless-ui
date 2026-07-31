@@ -10,26 +10,32 @@ import {
 import { CanvasRenderer } from 'echarts/renderers'
 import { LabelLayout } from 'echarts/features'
 
-let registered = false
+const chartExtensions = [
+  LineChart,
+  BarChart,
+  PieChart,
+  GaugeChart,
+  ScatterChart,
+  GridComponent,
+  TooltipComponent,
+  LegendComponent,
+  TitleComponent,
+  DatasetComponent,
+  LabelLayout,
+  CanvasRenderer,
+]
 
-/** Idempotent echarts.use for tree-shaken build. */
+/**
+ * Register the tree-shaken ECharts surface used by HChart.
+ *
+ * Do not cache this at the chart-package module level. In a Vite workspace,
+ * HMR and multiple adapters can recreate this module while retaining (or
+ * recreating) ECharts' own registry. ECharts.use is idempotent per extension,
+ * so calling it at the controller boundary is safe and keeps the registry
+ * attached to the actual ECharts instance being used by this module.
+ */
 export function ensureEchartsRegistered() {
-  if (registered) return
-  echarts.use([
-    LineChart,
-    BarChart,
-    PieChart,
-    GaugeChart,
-    ScatterChart,
-    GridComponent,
-    TooltipComponent,
-    LegendComponent,
-    TitleComponent,
-    DatasetComponent,
-    LabelLayout,
-    CanvasRenderer,
-  ])
-  registered = true
+  echarts.use(chartExtensions)
 }
 
 export { echarts }

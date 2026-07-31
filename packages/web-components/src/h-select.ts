@@ -155,7 +155,7 @@ export class HSelect extends LitElement {
   private makeCollection() {
     return select.collection({
       items: this.items ?? [],
-      itemToValue: (item: Item) => item.value,
+      itemToValue: (item: Item) => String(item.value),
       itemToString: (item: Item) => item.label,
       isItemDisabled: (item: Item) => Boolean(item.disabled),
     })
@@ -282,7 +282,7 @@ export class HSelect extends LitElement {
 
   private patchItemState(api: ReturnType<typeof select.connect>, item: Item) {
     const node = this.querySelector<HTMLElement>(
-      `[data-part="item"][data-value="${CSS.escape(item.value)}"]`,
+      `[data-part="item"][data-value="${CSS.escape(String(item.value))}"]`,
     )
     if (!node) return
 
@@ -316,7 +316,7 @@ export class HSelect extends LitElement {
     bind(this.querySelector('[data-part="hidden-select"]'), api.getHiddenSelectProps())
 
     for (const item of this.items ?? []) {
-      const node = this.querySelector(`[data-part="item"][data-value="${CSS.escape(item.value)}"]`)
+      const node = this.querySelector(`[data-part="item"][data-value="${CSS.escape(String(item.value))}"]`)
       if (!node) continue
       bind(node, api.getItemProps({ item }))
       bind(node.querySelector('[data-part="item-text"]'), api.getItemTextProps({ item }))

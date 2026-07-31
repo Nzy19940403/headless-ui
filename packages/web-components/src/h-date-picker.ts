@@ -1,4 +1,4 @@
-import { LitElement, html, nothing } from 'lit'
+import { LitElement, html, nothing, render as litRender } from 'lit'
 import { repeat } from 'lit/directives/repeat.js'
 import * as datePicker from '@zag-js/date-picker'
 import { parse as parseDate } from '@zag-js/date-picker'
@@ -180,6 +180,7 @@ export class HDatePicker extends LitElement {
   private snapValue: DateValue[] = []
   private structureKey = ''
   private structureUpdateRequested = false
+  private portalRoot?: HTMLDivElement
 
   constructor() {
     super()
@@ -210,6 +211,7 @@ export class HDatePicker extends LitElement {
   }
 
   disconnectedCallback() {
+    this.teardownPortal()
     this.stopMachine()
     super.disconnectedCallback()
   }
@@ -228,15 +230,18 @@ export class HDatePicker extends LitElement {
       changed.has('label') ||
       changed.has('placeholder') ||
       changed.has('showWeekNumbers') ||
+      changed.has('inline') ||
       this.structureKey === ''
     )
   }
 
   protected firstUpdated() {
+    this.syncPortal()
     this.bindAllZagProps()
   }
 
   protected updated() {
+    this.syncPortal()
     this.bindAllZagProps()
   }
 
@@ -450,30 +455,30 @@ export class HDatePicker extends LitElement {
     })
     bind(this.querySelector('[data-part="trigger"]'), api.getTriggerProps())
     bind(this.querySelector('[data-part="clear-trigger"]'), api.getClearTriggerProps())
-    bind(this.querySelector('[data-part="positioner"]'), api.getPositionerProps())
-    bind(this.querySelector('[data-part="content"]'), api.getContentProps())
+    bind(this.queryPart('[data-part="positioner"]'), api.getPositionerProps())
+    bind(this.queryPart('[data-part="content"]'), api.getContentProps())
 
     for (const view of ['day', 'month', 'year'] as DatePickerView[]) {
-      bind(this.querySelector(`[data-part="view"][data-view="${view}"]`), api.getViewProps({ view }))
-      bind(this.querySelector(`[data-part="view-control"][data-view="${view}"]`), api.getViewControlProps({ view }))
-      bind(this.querySelector(`[data-part="prev-trigger"][data-view="${view}"]`), api.getPrevTriggerProps({ view }))
-      bind(this.querySelector(`[data-part="next-trigger"][data-view="${view}"]`), api.getNextTriggerProps({ view }))
-      bind(this.querySelector(`[data-part="view-trigger"][data-view="${view}"]`), api.getViewTriggerProps({ view }))
-      bind(this.querySelector(`[data-part="table"][data-view="${view}"]`), api.getTableProps({ view }))
-      bind(this.querySelector(`[data-part="table-head"][data-view="${view}"]`), api.getTableHeadProps({ view }))
-      bind(this.querySelector(`[data-part="table-body"][data-view="${view}"]`), api.getTableBodyProps({ view }))
+      bind(this.queryPart(`[data-part="view"][data-view="${view}"]`), api.getViewProps({ view }))
+      bind(this.queryPart(`[data-part="view-control"][data-view="${view}"]`), api.getViewControlProps({ view }))
+      bind(this.queryPart(`[data-part="prev-trigger"][data-view="${view}"]`), api.getPrevTriggerProps({ view }))
+      bind(this.queryPart(`[data-part="next-trigger"][data-view="${view}"]`), api.getNextTriggerProps({ view }))
+      bind(this.queryPart(`[data-part="view-trigger"][data-view="${view}"]`), api.getViewTriggerProps({ view }))
+      bind(this.queryPart(`[data-part="table"][data-view="${view}"]`), api.getTableProps({ view }))
+      bind(this.queryPart(`[data-part="table-head"][data-view="${view}"]`), api.getTableHeadProps({ view }))
+      bind(this.queryPart(`[data-part="table-body"][data-view="${view}"]`), api.getTableBodyProps({ view }))
     }
 
-    bind(this.querySelector('[data-week-number-header]'), api.getWeekNumberHeaderCellProps())
+    bind(this.queryPart('[data-week-number-header]'), api.getWeekNumberHeaderCellProps())
 
-    this.querySelectorAll<HTMLElement>('[data-week-number-cell]').forEach(cell => {
+    this.queryParts<HTMLElement>('[data-week-number-cell]').forEach(cell => {
       const weekIndex = Number(cell.dataset.weekIndex)
       const week = this.snapWeeks[weekIndex]
       if (!week || Number.isNaN(weekIndex)) return
       bind(cell, api.getWeekNumberCellProps({ weekIndex, week }))
     })
 
-    this.querySelectorAll<HTMLElement>('[data-cell-kind="day"]').forEach(cell => {
+    this.queryParts<HTMLElement>('[data-cell-kind="day"]').forEach(cell => {
       const value = cell.dataset.value
       if (!value) return
       try {
@@ -485,14 +490,14 @@ export class HDatePicker extends LitElement {
       }
     })
 
-    this.querySelectorAll<HTMLElement>('[data-cell-kind="month"]').forEach(cell => {
+    this.queryParts<HTMLElement>('[data-cell-kind="month"]').forEach(cell => {
       const value = Number(cell.dataset.value)
       if (Number.isNaN(value)) return
       bind(cell, api.getMonthTableCellProps({ value }))
       bind(cell.querySelector('[data-cell-kind="month-trigger"]'), api.getMonthTableCellTriggerProps({ value }))
     })
 
-    this.querySelectorAll<HTMLElement>('[data-cell-kind="year"]').forEach(cell => {
+    this.queryParts<HTMLElement>('[data-cell-kind="year"]').forEach(cell => {
       const value = Number(cell.dataset.value)
       if (Number.isNaN(value)) return
       bind(cell, api.getYearTableCellProps({ value }))
@@ -500,45 +505,50 @@ export class HDatePicker extends LitElement {
     })
   }
 
-  protected render() {
+  private queryPart<T extends Element = Element>(selector: string) {
+    return this.querySelector<T>(selector) ?? this.portalRoot?.querySelector<T>(selector) ?? null
+  }
+
+  private queryParts<T extends Element = Element>(selector: string) {
+    const hostNodes = Array.from(this.querySelectorAll<T>(selector))
+    const portalNodes = this.portalRoot ? Array.from(this.portalRoot.querySelectorAll<T>(selector)) : []
+    return [...hostNodes, ...portalNodes]
+  }
+
+  private ensurePortalRoot() {
+    if (this.portalRoot?.isConnected) return this.portalRoot
+
+    const root = document.createElement('div')
+    root.className = 'ui-date-picker__portal'
+    root.dataset.owner = this.id || ''
+    document.body.append(root)
+    this.portalRoot = root
+    return root
+  }
+
+  private syncPortal() {
+    if (this.inline) {
+      this.teardownPortal()
+      return
+    }
+
+    // Zag's DatePicker examples render the positioner through a framework Portal.
+    // WC has no Zag portal helper, so Lit renders the same Zag anatomy into body.
+    const root = this.ensurePortalRoot()
+    litRender(this.renderPositioner(), root)
+  }
+
+  private teardownPortal() {
+    if (!this.portalRoot) return
+    litRender(nothing, this.portalRoot)
+    this.portalRoot.remove()
+    this.portalRoot = undefined
+  }
+
+  private renderPositioner() {
     const view = this.snapView
 
     return html`
-      ${this.label ? html`<label data-part="label" class="ui-field__label">${this.label}</label>` : nothing}
-      <div data-part="control" class="ui-date-picker__control">
-        ${this.selectionMode === 'multiple'
-          ? html`
-              <div data-part="selected-dates" class="ui-date-picker__selected-dates">
-                ${this.snapValue.length
-                  ? repeat(
-                      this.snapValue,
-                      date => date.toString(),
-                      (date, index) => html`
-                        <span class="ui-date-picker__selected-date">
-                          ${date.toString()}
-                          <button
-                            type="button"
-                            class="ui-date-picker__selected-remove"
-                            aria-label=${`Remove ${date.toString()}`}
-                            @click=${(event: Event) => this.removeSelectedDate(event, index)}
-                          >
-                            x
-                          </button>
-                        </span>
-                      `,
-                    )
-                  : html`<span class="ui-date-picker__selected-placeholder">${this.placeholder}</span>`}
-              </div>
-            `
-          : this.selectionMode === 'range'
-          ? html`
-              <input data-part="input" class="ui-date-picker__input" placeholder="Start" />
-              <input data-part="input" class="ui-date-picker__input" placeholder="End" />
-            `
-          : html`<input data-part="input" class="ui-date-picker__input" placeholder=${this.placeholder} />`}
-        <button type="button" data-part="trigger" class="ui-date-picker__trigger">Calendar</button>
-        <button type="button" data-part="clear-trigger" class="ui-date-picker__clear">Clear</button>
-      </div>
       <div data-part="positioner" class="ui-date-picker__positioner">
         <div data-part="content" class="ui-date-picker__content">
           <div data-part="view" data-view="day" class="ui-date-picker__view" ?hidden=${view !== 'day'}>
@@ -698,6 +708,47 @@ export class HDatePicker extends LitElement {
           </div>
         </div>
       </div>
+    `
+  }
+
+  protected render() {
+    return html`
+      ${this.label ? html`<label data-part="label" class="ui-field__label">${this.label}</label>` : nothing}
+      <div data-part="control" class="ui-date-picker__control">
+        ${this.selectionMode === 'multiple'
+          ? html`
+              <div data-part="selected-dates" class="ui-date-picker__selected-dates">
+                ${this.snapValue.length
+                  ? repeat(
+                      this.snapValue,
+                      date => date.toString(),
+                      (date, index) => html`
+                        <span class="ui-date-picker__selected-date">
+                          ${date.toString()}
+                          <button
+                            type="button"
+                            class="ui-date-picker__selected-remove"
+                            aria-label=${`Remove ${date.toString()}`}
+                            @click=${(event: Event) => this.removeSelectedDate(event, index)}
+                          >
+                            x
+                          </button>
+                        </span>
+                      `,
+                    )
+                  : html`<span class="ui-date-picker__selected-placeholder">${this.placeholder}</span>`}
+              </div>
+            `
+          : this.selectionMode === 'range'
+          ? html`
+              <input data-part="input" class="ui-date-picker__input" placeholder="Start" />
+              <input data-part="input" class="ui-date-picker__input" placeholder="End" />
+            `
+          : html`<input data-part="input" class="ui-date-picker__input" placeholder=${this.placeholder} />`}
+        <button type="button" data-part="trigger" class="ui-date-picker__trigger">Calendar</button>
+        <button type="button" data-part="clear-trigger" class="ui-date-picker__clear">Clear</button>
+      </div>
+      ${this.inline ? this.renderPositioner() : nothing}
     `
   }
 }

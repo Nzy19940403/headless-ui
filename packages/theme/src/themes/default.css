@@ -25,6 +25,8 @@
 
   --ui-color-surface: #ffffff;
   --ui-color-surface-muted: #e8eef9;
+  --ui-table-row-hover-bg: #dbe8ff;
+  --ui-table-pinned-hover-bg: #dbe8ff;
   --ui-color-canvas: #ffffff;
   --ui-color-canvas-soft: #f4f7fb;
   --ui-color-sidebar: #eef3fb;

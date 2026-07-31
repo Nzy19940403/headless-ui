@@ -1,11 +1,11 @@
 import type { ComponentContent } from './shared'
 
 /** Payload for single-value selection (Tabs, and similar). */
-export interface ValueChangeDetails {
-  value: string
+export interface ValueChangeDetails<T = string> {
+  value: T
 }
 
-export type ValueChangeHandler = (details: ValueChangeDetails) => void
+export type ValueChangeHandler<T = string> = (details: ValueChangeDetails<T>) => void
 
 export interface TabsItemContract<TContent = ComponentContent> {
   value: string

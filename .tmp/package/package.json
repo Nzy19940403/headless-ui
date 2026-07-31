@@ -1,0 +1,48 @@
+{
+  "name": "@meshflow/form",
+  "version": "1.0.1",
+  "description": "Form orchestration adapter for @meshflow/core, providing high-level form logic and schema validation.",
+  "main": "./index.js",
+  "module": "./index.mjs",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./index.d.mts",  
+        "default": "./index.mjs"
+      },
+      "require": {
+        "types": "./index.d.ts",   
+        "default": "./index.js"
+      }
+    }
+  },
+  "author": "nzy",
+  "license": "AGPL-3.0-or-later",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "keywords": [
+    "form",
+    "meshflow",
+    "form-logic",
+    "schema-validator",
+    "reactive-form"
+  ],
+  "dependencies": {
+    "@meshflow/core": "^1.0.0"
+  },
+  "peerDependencies": {
+    "@jsonforms/core": ">=3.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nzy19940403/meshflow.git",
+    "directory": "utils/forms"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "tsup": "^8.0.0",
+    "@jsonforms/core": "^3.8.0"
+  }
+}

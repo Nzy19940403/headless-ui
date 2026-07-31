@@ -8,6 +8,7 @@ const props = withDefaults(defineProps<VStackContract & { class?: string }>(), {
   align: 'stretch',
   justify: 'start',
   reverse: false,
+  fillHeight: false,
 })
 
 const classes = computed(() => stackClassName('ui-v-stack', props, props.class))

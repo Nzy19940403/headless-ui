@@ -9,10 +9,11 @@ const emit = defineEmits<{ 'value-change': [details: AccordionValueChangeDetails
 </script>
 
 <template>
+  <!-- Ark Vue Accordion: controlled state is modelValue, not value -->
   <Accordion.Root
     :multiple="multiple"
     :default-value="defaultValue"
-    :value="value"
+    :model-value="value"
     class="accordion"
     @value-change="emit('value-change', $event)"
   >

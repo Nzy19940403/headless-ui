@@ -9,5 +9,7 @@ export interface ToggleContract {
   checked?: boolean
   defaultChecked?: boolean
   disabled?: boolean
+  error?: string
+  helperText?: string
   onCheckedChange?: CheckedChangeHandler
 }

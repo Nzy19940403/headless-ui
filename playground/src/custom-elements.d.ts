@@ -93,6 +93,27 @@ declare global {
         onExpandedChange?: (detail: { expandedValue: string[] }) => void
         onSelectionChange?: (detail: { selectedValue: string[] }) => void
       }
+      'h-tree-select': CustomElementProps & {
+        nodes?: string | unknown[]
+        value?: string | string[]
+        'default-value'?: string | string[]
+        placeholder?: string
+        multiple?: boolean
+        'select-branches'?: boolean
+        'column-width'?: string | number
+        'column-widths'?: string | Array<string | number>
+        height?: string | number
+        'expanded-value'?: string
+        'default-expanded-value'?: string
+        onValueChange?: (detail: {
+          value: string | string[]
+          selectedValue: string[]
+        }) => void
+        onExpandedChange?: (detail: { expandedValue: string[] }) => void
+        renderNode?: (ctx: unknown) => unknown
+        renderValue?: (ctx: unknown) => unknown
+        renderTag?: (ctx: unknown) => unknown
+      }
       'h-chart': CustomElementProps & {
         type?: string
         categories?: string | string[]

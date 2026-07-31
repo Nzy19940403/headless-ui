@@ -162,8 +162,9 @@ const rootProps = computed(() => {
       <DatePicker.Trigger class="ui-date-picker__trigger" type="button">Calendar</DatePicker.Trigger>
       <DatePicker.ClearTrigger class="ui-date-picker__clear" type="button">Clear</DatePicker.ClearTrigger>
     </DatePicker.Control>
-    <DatePicker.Positioner class="ui-date-picker__positioner">
-      <DatePicker.Content class="ui-date-picker__content">
+    <Teleport to="body" :disabled="inline">
+      <DatePicker.Positioner class="ui-date-picker__positioner">
+        <DatePicker.Content class="ui-date-picker__content">
         <DatePicker.View view="day" class="ui-date-picker__view">
           <DatePicker.Context v-slot="api">
             <DatePicker.ViewControl class="ui-date-picker__view-control">
@@ -275,7 +276,8 @@ const rootProps = computed(() => {
             </DatePicker.Table>
           </DatePicker.Context>
         </DatePicker.View>
-      </DatePicker.Content>
-    </DatePicker.Positioner>
+        </DatePicker.Content>
+      </DatePicker.Positioner>
+    </Teleport>
   </DatePicker.Root>
 </template>

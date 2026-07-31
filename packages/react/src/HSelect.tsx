@@ -1,12 +1,14 @@
 import { createListCollection, Select } from '@ark-ui/react/select'
+import { Portal } from '@ark-ui/react/portal'
 import { useMemo } from 'react'
+import { buildSelectValueMap } from '@demo/ui-core'
 import type { SelectContract, ValueChangeDetails } from '@demo/ui-core'
 
-export interface HSelectProps extends SelectContract {
-  onValueChange?: (details: ValueChangeDetails) => void
+export interface HSelectProps<V = string | number> extends SelectContract<V> {
+  onValueChange?: (details: ValueChangeDetails<V>) => void
 }
 
-export function HSelect({
+export function HSelect<V extends string | number = string | number>({
   items,
   value,
   defaultValue,
@@ -15,9 +17,15 @@ export function HSelect({
   label,
   name,
   onValueChange,
-}: HSelectProps) {
+}: HSelectProps<V>) {
+  const valueBackmap = useMemo(() => buildSelectValueMap(items), [items])
+
   const collection = useMemo(
-    () => createListCollection({ items, itemToString: item => item.label, itemToValue: item => item.value }),
+    () => createListCollection({
+      items: items.map(item => ({ ...item, value: String(item.value) })),
+      itemToString: item => item.label,
+      itemToValue: item => item.value,
+    }),
     [items],
   )
 
@@ -27,9 +35,13 @@ export function HSelect({
       collection={collection}
       disabled={disabled}
       name={name}
-      value={value ? [value] : undefined}
-      defaultValue={defaultValue ? [defaultValue] : undefined}
-      onValueChange={details => onValueChange?.({ value: details.value[0] ?? '' })}
+      value={value !== undefined ? [String(value)] : undefined}
+      defaultValue={defaultValue !== undefined ? [String(defaultValue)] : undefined}
+      onValueChange={details => {
+        const rawValue = details.value[0]
+        const next = rawValue !== undefined ? (valueBackmap.get(rawValue) ?? '' as V) : '' as V
+        onValueChange?.({ value: next })
+      }}
     >
       {label ? <Select.Label className="ui-field__label">{label}</Select.Label> : null}
       <Select.Control className="ui-select__control">
@@ -38,6 +50,7 @@ export function HSelect({
           <Select.Indicator className="ui-select__indicator">▾</Select.Indicator>
         </Select.Trigger>
       </Select.Control>
+      <Portal>
       <Select.Positioner>
         <Select.Content className="ui-select__content">
           {collection.items.map(item => (
@@ -48,6 +61,7 @@ export function HSelect({
           ))}
         </Select.Content>
       </Select.Positioner>
+      </Portal>
       <Select.HiddenSelect />
     </Select.Root>
   )

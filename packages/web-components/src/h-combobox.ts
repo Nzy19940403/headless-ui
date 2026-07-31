@@ -131,7 +131,7 @@ export class HCombobox extends LitElement {
   private makeCollection() {
     return combobox.collection({
       items: this.items ?? [],
-      itemToValue: (item: Item) => item.value,
+      itemToValue: (item: Item) => String(item.value),
       itemToString: (item: Item) => item.label,
       isItemDisabled: (item: Item) => Boolean(item.disabled),
     })
@@ -204,7 +204,7 @@ export class HCombobox extends LitElement {
   }
 
   private patchItemState(api: ReturnType<typeof combobox.connect>, item: Item) {
-    const node = this.querySelector<HTMLElement>(`[data-part="item"][data-value="${CSS.escape(item.value)}"]`)
+    const node = this.querySelector<HTMLElement>(`[data-part="item"][data-value="${CSS.escape(String(item.value))}"]`)
     if (!node) return
     const state = api.getItemState({ item })
     if (state.highlighted) node.setAttribute('data-highlighted', '')
@@ -227,7 +227,7 @@ export class HCombobox extends LitElement {
     bind(this.querySelector('[data-part="positioner"]'), api.getPositionerProps())
     bind(this.querySelector('[data-part="content"]'), api.getContentProps())
     for (const item of this.items ?? []) {
-      const node = this.querySelector(`[data-part="item"][data-value="${CSS.escape(item.value)}"]`)
+      const node = this.querySelector(`[data-part="item"][data-value="${CSS.escape(String(item.value))}"]`)
       if (!node) continue
       bind(node, api.getItemProps({ item }))
       bind(node.querySelector('[data-part="item-text"]'), api.getItemTextProps({ item }))

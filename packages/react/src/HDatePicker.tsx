@@ -1,4 +1,5 @@
 import { DatePicker, parseDate } from '@ark-ui/react/date-picker'
+import { Portal } from '@ark-ui/react/portal'
 import type {
   DatePickerContract,
   DatePickerFocusChangeDetails,
@@ -73,6 +74,140 @@ export function HDatePicker({
   onViewChange,
   onVisibleRangeChange,
 }: HDatePickerProps) {
+  const positioner = (
+    <DatePicker.Positioner className="ui-date-picker__positioner">
+      <DatePicker.Content className="ui-date-picker__content">
+        <DatePicker.View view="day" className="ui-date-picker__view">
+          <DatePicker.Context>
+            {datePicker => (
+              <>
+                <DatePicker.ViewControl className="ui-date-picker__view-control">
+                  <DatePicker.PrevTrigger className="ui-date-picker__nav" type="button">
+                    Prev
+                  </DatePicker.PrevTrigger>
+                  <DatePicker.ViewTrigger className="ui-date-picker__view-trigger" type="button">
+                    <DatePicker.RangeText />
+                  </DatePicker.ViewTrigger>
+                  <DatePicker.NextTrigger className="ui-date-picker__nav" type="button">
+                    Next
+                  </DatePicker.NextTrigger>
+                </DatePicker.ViewControl>
+                <DatePicker.Table className="ui-date-picker__table">
+                  <DatePicker.TableHead>
+                    <DatePicker.TableRow>
+                      {showWeekNumbers ? (
+                        <DatePicker.WeekNumberHeaderCell className="ui-date-picker__th ui-date-picker__th--week">
+                          #
+                        </DatePicker.WeekNumberHeaderCell>
+                      ) : null}
+                      {datePicker.weekDays.map((weekDay, id) => (
+                        <DatePicker.TableHeader key={id} className="ui-date-picker__th">
+                          {weekDay.short}
+                        </DatePicker.TableHeader>
+                      ))}
+                    </DatePicker.TableRow>
+                  </DatePicker.TableHead>
+                  <DatePicker.TableBody>
+                    {datePicker.weeks.map((week, id) => (
+                      <DatePicker.TableRow key={id}>
+                        {showWeekNumbers ? (
+                          <DatePicker.WeekNumberCell
+                            weekIndex={id}
+                            week={week}
+                            className="ui-date-picker__td ui-date-picker__week"
+                          >
+                            {datePicker.getWeekNumber(week)}
+                          </DatePicker.WeekNumberCell>
+                        ) : null}
+                        {week.map((day, dayId) => (
+                          <DatePicker.TableCell key={dayId} value={day} className="ui-date-picker__td">
+                            <DatePicker.TableCellTrigger className="ui-date-picker__day">
+                              {day.day}
+                            </DatePicker.TableCellTrigger>
+                          </DatePicker.TableCell>
+                        ))}
+                      </DatePicker.TableRow>
+                    ))}
+                  </DatePicker.TableBody>
+                </DatePicker.Table>
+              </>
+            )}
+          </DatePicker.Context>
+        </DatePicker.View>
+
+        <DatePicker.View view="month" className="ui-date-picker__view">
+          <DatePicker.Context>
+            {datePicker => (
+              <>
+                <DatePicker.ViewControl className="ui-date-picker__view-control">
+                  <DatePicker.PrevTrigger className="ui-date-picker__nav" type="button">
+                    Prev
+                  </DatePicker.PrevTrigger>
+                  <DatePicker.ViewTrigger className="ui-date-picker__view-trigger" type="button">
+                    <DatePicker.RangeText />
+                  </DatePicker.ViewTrigger>
+                  <DatePicker.NextTrigger className="ui-date-picker__nav" type="button">
+                    Next
+                  </DatePicker.NextTrigger>
+                </DatePicker.ViewControl>
+                <DatePicker.Table className="ui-date-picker__table">
+                  <DatePicker.TableBody>
+                    {datePicker.getMonthsGrid({ columns: 4, format: 'short' }).map((months, id) => (
+                      <DatePicker.TableRow key={id}>
+                        {months.map((month, monthId) => (
+                          <DatePicker.TableCell key={monthId} value={month.value} className="ui-date-picker__td">
+                            <DatePicker.TableCellTrigger className="ui-date-picker__cell">
+                              {month.label}
+                            </DatePicker.TableCellTrigger>
+                          </DatePicker.TableCell>
+                        ))}
+                      </DatePicker.TableRow>
+                    ))}
+                  </DatePicker.TableBody>
+                </DatePicker.Table>
+              </>
+            )}
+          </DatePicker.Context>
+        </DatePicker.View>
+
+        <DatePicker.View view="year" className="ui-date-picker__view">
+          <DatePicker.Context>
+            {datePicker => (
+              <>
+                <DatePicker.ViewControl className="ui-date-picker__view-control">
+                  <DatePicker.PrevTrigger className="ui-date-picker__nav" type="button">
+                    Prev
+                  </DatePicker.PrevTrigger>
+                  <DatePicker.ViewTrigger className="ui-date-picker__view-trigger" type="button">
+                    <DatePicker.RangeText />
+                  </DatePicker.ViewTrigger>
+                  <DatePicker.NextTrigger className="ui-date-picker__nav" type="button">
+                    Next
+                  </DatePicker.NextTrigger>
+                </DatePicker.ViewControl>
+                <DatePicker.Table className="ui-date-picker__table">
+                  <DatePicker.TableBody>
+                    {datePicker.getYearsGrid({ columns: 4 }).map((years, id) => (
+                      <DatePicker.TableRow key={id}>
+                        {years.map((year, yearId) => (
+                          <DatePicker.TableCell key={yearId} value={year.value} className="ui-date-picker__td">
+                            <DatePicker.TableCellTrigger className="ui-date-picker__cell">
+                              {year.label}
+                            </DatePicker.TableCellTrigger>
+                          </DatePicker.TableCell>
+                        ))}
+                      </DatePicker.TableRow>
+                    ))}
+                  </DatePicker.TableBody>
+                </DatePicker.Table>
+              </>
+            )}
+          </DatePicker.Context>
+        </DatePicker.View>
+      </DatePicker.Content>
+    </DatePicker.Positioner>
+  )
+
   return (
     <DatePicker.Root
       className="ui-date-picker"
@@ -171,137 +306,7 @@ export function HDatePicker({
           Clear
         </DatePicker.ClearTrigger>
       </DatePicker.Control>
-      <DatePicker.Positioner className="ui-date-picker__positioner">
-        <DatePicker.Content className="ui-date-picker__content">
-          <DatePicker.View view="day" className="ui-date-picker__view">
-            <DatePicker.Context>
-              {datePicker => (
-                <>
-                  <DatePicker.ViewControl className="ui-date-picker__view-control">
-                    <DatePicker.PrevTrigger className="ui-date-picker__nav" type="button">
-                      Prev
-                    </DatePicker.PrevTrigger>
-                    <DatePicker.ViewTrigger className="ui-date-picker__view-trigger" type="button">
-                      <DatePicker.RangeText />
-                    </DatePicker.ViewTrigger>
-                    <DatePicker.NextTrigger className="ui-date-picker__nav" type="button">
-                      Next
-                    </DatePicker.NextTrigger>
-                  </DatePicker.ViewControl>
-                  <DatePicker.Table className="ui-date-picker__table">
-                    <DatePicker.TableHead>
-                      <DatePicker.TableRow>
-                        {showWeekNumbers ? (
-                          <DatePicker.WeekNumberHeaderCell className="ui-date-picker__th ui-date-picker__th--week">
-                            #
-                          </DatePicker.WeekNumberHeaderCell>
-                        ) : null}
-                        {datePicker.weekDays.map((weekDay, id) => (
-                          <DatePicker.TableHeader key={id} className="ui-date-picker__th">
-                            {weekDay.short}
-                          </DatePicker.TableHeader>
-                        ))}
-                      </DatePicker.TableRow>
-                    </DatePicker.TableHead>
-                    <DatePicker.TableBody>
-                      {datePicker.weeks.map((week, id) => (
-                        <DatePicker.TableRow key={id}>
-                          {showWeekNumbers ? (
-                            <DatePicker.WeekNumberCell
-                              weekIndex={id}
-                              week={week}
-                              className="ui-date-picker__td ui-date-picker__week"
-                            >
-                              {datePicker.getWeekNumber(week)}
-                            </DatePicker.WeekNumberCell>
-                          ) : null}
-                          {week.map((day, dayId) => (
-                            <DatePicker.TableCell key={dayId} value={day} className="ui-date-picker__td">
-                              <DatePicker.TableCellTrigger className="ui-date-picker__day">
-                                {day.day}
-                              </DatePicker.TableCellTrigger>
-                            </DatePicker.TableCell>
-                          ))}
-                        </DatePicker.TableRow>
-                      ))}
-                    </DatePicker.TableBody>
-                  </DatePicker.Table>
-                </>
-              )}
-            </DatePicker.Context>
-          </DatePicker.View>
-
-          <DatePicker.View view="month" className="ui-date-picker__view">
-            <DatePicker.Context>
-              {datePicker => (
-                <>
-                  <DatePicker.ViewControl className="ui-date-picker__view-control">
-                    <DatePicker.PrevTrigger className="ui-date-picker__nav" type="button">
-                      Prev
-                    </DatePicker.PrevTrigger>
-                    <DatePicker.ViewTrigger className="ui-date-picker__view-trigger" type="button">
-                      <DatePicker.RangeText />
-                    </DatePicker.ViewTrigger>
-                    <DatePicker.NextTrigger className="ui-date-picker__nav" type="button">
-                      Next
-                    </DatePicker.NextTrigger>
-                  </DatePicker.ViewControl>
-                  <DatePicker.Table className="ui-date-picker__table">
-                    <DatePicker.TableBody>
-                      {datePicker.getMonthsGrid({ columns: 4, format: 'short' }).map((months, id) => (
-                        <DatePicker.TableRow key={id}>
-                          {months.map((month, monthId) => (
-                            <DatePicker.TableCell key={monthId} value={month.value} className="ui-date-picker__td">
-                              <DatePicker.TableCellTrigger className="ui-date-picker__cell">
-                                {month.label}
-                              </DatePicker.TableCellTrigger>
-                            </DatePicker.TableCell>
-                          ))}
-                        </DatePicker.TableRow>
-                      ))}
-                    </DatePicker.TableBody>
-                  </DatePicker.Table>
-                </>
-              )}
-            </DatePicker.Context>
-          </DatePicker.View>
-
-          <DatePicker.View view="year" className="ui-date-picker__view">
-            <DatePicker.Context>
-              {datePicker => (
-                <>
-                  <DatePicker.ViewControl className="ui-date-picker__view-control">
-                    <DatePicker.PrevTrigger className="ui-date-picker__nav" type="button">
-                      Prev
-                    </DatePicker.PrevTrigger>
-                    <DatePicker.ViewTrigger className="ui-date-picker__view-trigger" type="button">
-                      <DatePicker.RangeText />
-                    </DatePicker.ViewTrigger>
-                    <DatePicker.NextTrigger className="ui-date-picker__nav" type="button">
-                      Next
-                    </DatePicker.NextTrigger>
-                  </DatePicker.ViewControl>
-                  <DatePicker.Table className="ui-date-picker__table">
-                    <DatePicker.TableBody>
-                      {datePicker.getYearsGrid({ columns: 4 }).map((years, id) => (
-                        <DatePicker.TableRow key={id}>
-                          {years.map((year, yearId) => (
-                            <DatePicker.TableCell key={yearId} value={year.value} className="ui-date-picker__td">
-                              <DatePicker.TableCellTrigger className="ui-date-picker__cell">
-                                {year.label}
-                              </DatePicker.TableCellTrigger>
-                            </DatePicker.TableCell>
-                          ))}
-                        </DatePicker.TableRow>
-                      ))}
-                    </DatePicker.TableBody>
-                  </DatePicker.Table>
-                </>
-              )}
-            </DatePicker.Context>
-          </DatePicker.View>
-        </DatePicker.Content>
-      </DatePicker.Positioner>
+      {inline ? positioner : <Portal>{positioner}</Portal>}
     </DatePicker.Root>
   )
 }

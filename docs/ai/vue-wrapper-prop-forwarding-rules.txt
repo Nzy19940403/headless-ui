@@ -22,3 +22,7 @@ Failure mode this prevents
 Do not
 - Do not use setIfDefined for optional Boolean props in Vue wrappers.
 - Do not assume React prop semantics and Vue prop semantics are identical.
+
+Related
+- If the symptom is empty initial text / defaultValue ignored on Vue only, see
+  vue-value-model-binding-rules.md (Core value/defaultValue → Ark modelValue).

@@ -10,12 +10,13 @@ export function HVStack({
   align = 'stretch',
   justify = 'start',
   reverse = false,
+  fillHeight = false,
   className,
   style,
   children,
   ...props
 }: HVStackProps) {
-  const contract = { gap, align, justify, reverse }
+  const contract = { gap, align, justify, reverse, fillHeight }
   return (
     <div
       {...props}

@@ -200,9 +200,67 @@ h1 {
   margin: 4px 0;
 }
 
+/* Adapter preview: tabbed (full width) instead of 3-column crush */
+.adapter-tabs {
+  margin-top: 12px;
+  border: 1px solid var(--ui-color-hairline, #e0e7f2);
+  border-radius: var(--ui-radius-panel, 16px);
+  background: var(--ui-color-surface, white);
+  box-shadow: var(--ui-shadow-sm, 0 14px 40px #2f4d7a12);
+  overflow: hidden;
+}
+
+.adapter-tabs__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--ui-color-hairline, #e0e7f2);
+  background: var(--ui-color-canvas-soft, #f4f7fb);
+}
+
+.adapter-tabs__tab {
+  appearance: none;
+  min-height: 34px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ui-color-text-secondary, #405577);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.adapter-tabs__tab:hover {
+  color: var(--ui-color-text, #172033);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.adapter-tabs__tab.is-active {
+  border-color: var(--ui-color-primary-soft, #dbe8ff);
+  background: var(--ui-color-surface, #fff);
+  color: var(--ui-color-primary, #2563eb);
+  box-shadow: 0 1px 2px rgba(15, 28, 46, 0.06);
+}
+
+.adapter-tabs__panel {
+  min-height: 220px;
+  padding: 20px;
+  overflow: auto;
+}
+
+.adapter-tabs__panel .preview,
+.adapter-tabs__panel .demo-stack {
+  width: 100%;
+  min-width: 0;
+}
+
 .adapter-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: 16px;
   margin-top: 12px;
 }
@@ -288,6 +346,58 @@ h1 {
   font-size: 13px;
 }
 
+.demo-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--ui-color-hairline, #d8e0ec);
+  border-radius: 8px;
+  background: var(--ui-color-surface-muted, #f8fbff);
+  color: var(--ui-color-text, #1a2744);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.demo-btn:hover {
+  border-color: var(--ui-color-primary, #3b6ef5);
+  color: var(--ui-color-primary, #3b6ef5);
+}
+
+/* Input page sections (Ark Field-style gallery) */
+.input-demo {
+  /* gap handled by layout components (HVStack) */
+}
+
+.input-demo-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.input-demo-title {
+  margin: 0;
+  color: var(--ui-color-text-secondary, #405577);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.input-demo-section .ui-field,
+.input-demo-section h-input,
+.input-demo-section .ui-number-input,
+.input-demo-section h-number-input,
+.input-demo-section .ui-segment-group--full-width,
+.input-demo-section h-segment-group.ui-segment-group--full-width,
+.input-demo-section h-segment-group[data-full-width] {
+  width: 100%;
+  align-self: stretch;
+}
+
 .demo-case {
   display: grid;
   gap: 8px;
@@ -334,6 +444,70 @@ h1 {
 
 .loading {
   color: var(--ui-color-muted, #66738b);
+}
+
+.table-demo {
+  gap: 12px;
+}
+
+.table-demo-note {
+  margin: 0;
+  color: var(--ui-color-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.table-demo-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.table-demo-fill-host {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: 1px dashed var(--ui-color-hairline);
+  border-radius: var(--ui-radius-panel, 12px);
+  overflow: hidden;
+}
+
+.table-demo-fill-host .ui-table {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.table-demo-legend {
+  width: 100%;
+}
+
+.table-demo-expanded {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.table-demo-expanded span {
+  display: grid;
+  gap: 3px;
+}
+
+.table-demo-expanded strong {
+  color: var(--ui-color-text);
+  font-size: 13px;
+}
+
+.table-demo-expanded small {
+  color: var(--ui-color-muted);
+  font-size: 11px;
+}
+
+.ui-table__expanded-fallback {
+  margin: 0;
+  white-space: pre-wrap;
+  font-size: 12px;
+  color: var(--ui-color-muted);
 }
 
 .theme-switch {
@@ -1011,8 +1185,8 @@ h1 {
     border-bottom: 1px solid var(--ui-color-hairline, #e0e7f2);
   }
 
-  .adapter-grid {
-    grid-template-columns: 1fr;
+  .adapter-tabs__panel {
+    padding: 14px;
   }
 
   .route-page {

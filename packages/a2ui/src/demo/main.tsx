@@ -1,6 +1,7 @@
 import { StrictMode, useState, useRef, type FormEvent, Component, type ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
 import '@demo/ui-theme'
+import './production-theme.css'
 import { buildSystemPrompt } from '../llm/prompt-builder'
 import { catalog } from '../catalog/catalog'
 import { parseA2UIMessages, A2UIParseError } from '../protocol/parser'
@@ -8,6 +9,8 @@ import type { A2UIUpdateComponentsMessage, A2UISurface, A2UIUpdateDataModelMessa
 import { A2UI_VERSION } from '../protocol/types'
 import { generateReactCode } from '../codegen/react'
 import { A2UIRenderer } from '../renderer/react'
+import { HDrawer, HNavMenu, HTextarea, type HNavMenuItem } from '@demo/ui-react'
+import attendanceJsonl from '../../replica-attendance.jsonl?raw'
 
 // ── LLM config ────────────────────────────────────────────────────
 
@@ -284,6 +287,8 @@ const FORM_DATA: A2UIUpdateDataModelMessage = {
   },
 }
 
+const ATTENDANCE_SURFACE: A2UISurface = parseA2UIMessages(attendanceJsonl)
+
 /** Wrap messages into a surface using the parser. */
 function toSurface(
   msgs: (A2UIUpdateComponentsMessage | A2UIUpdateDataModelMessage)[],
@@ -307,6 +312,32 @@ const SAMPLE_DATA: Record<string, A2UIUpdateDataModelMessage> = {
   dashboard: DASHBOARD_DATA,
   form: FORM_DATA,
 }
+
+/** Left-drawer navigation — mirrors the production replica's sidebar. */
+const DRAWER_NAV_ITEMS: HNavMenuItem[] = [
+  {
+    key: 'basic-info',
+    label: '基础信息',
+    icon: '▤',
+    children: [
+      { key: 'device-info', label: '设备信息', icon: '▤' },
+      { key: 'person-list', label: '人员列表', icon: '◈' },
+      { key: 'config-info', label: '配置信息', icon: '⚙' },
+    ],
+  },
+  {
+    key: 'operation-records',
+    label: '运营记录',
+    icon: '▣',
+    children: [{ key: 'dispatch-management', label: '调度管理', icon: '◈' }],
+  },
+  {
+    key: 'operation-management',
+    label: '运营管理',
+    icon: '▣',
+    children: [{ key: 'operation-reports', label: '运营报表', icon: '▥' }],
+  },
+]
 
 // ── Inline styles keyed by theme tokens ───────────────────────────
 // Every colour references var(--ui-*) so the active theme drives everything.
@@ -336,14 +367,13 @@ const S = {
 
 const PAGE_STYLE: Record<string, React.CSSProperties> = {
   container: { display: 'flex', height: '100vh', fontFamily: S.font },
-  chat: { width: 380, display: 'flex', flexDirection: 'column', borderRight: S.borderSoft, background: S.sidebar },
-  chatHeader: { padding: '16px', borderBottom: S.border, fontSize: 14, fontWeight: 600 },
+  chatHeader: { padding: '12px 16px', borderBottom: S.border, fontSize: 14, fontWeight: 600 },
   messages: { flex: 1, overflow: 'auto', padding: '12px', display: 'flex', flexDirection: 'column', gap: 8 },
   inputArea: { padding: '12px', borderTop: S.border, display: 'flex', gap: 8 },
   input: { flex: 1, background: S.controlBg, border: `1px solid ${S.controlBorder}`, borderRadius: S.radius, padding: '8px 12px', color: S.text, fontSize: 13, outline: 'none' },
   sendBtn: { background: S.primary, color: 'white', border: 'none', borderRadius: S.radius, padding: '8px 16px', cursor: 'pointer', fontSize: 13, fontWeight: 600 },
-  preview: { flex: 1, overflow: 'auto', padding: '32px', background: S.canvasSoft },
-  sampleBar: { padding: '8px 12px', borderBottom: S.border, display: 'flex', gap: 8 },
+  preview: { flex: 1, overflow: 'auto', padding: '24px', background: S.canvasSoft },
+  sampleBar: { padding: '8px 12px', borderBottom: S.border, display: 'flex', gap: 8, flexWrap: 'wrap' },
   sampleBtn: { background: V('--ui-color-control-muted'), border: S.border, borderRadius: 6, color: S.textSec, padding: '4px 12px', cursor: 'pointer', fontSize: 12 },
   catalogBtn: { background: S.primarySoft, border: `1px solid ${V('--ui-color-primary-focus')}`, borderRadius: 6, color: S.primary, padding: '4px 12px', cursor: 'pointer', fontSize: 12 },
   badge: { background: 'red' } as React.CSSProperties,
@@ -355,6 +385,15 @@ interface ChatMessage {
   role: 'user' | 'assistant'
   text: string
 }
+
+/** Messages kept for the LLM conversation (not the display-only chat summaries). */
+interface LLMHistoryMessage {
+  role: 'user' | 'assistant'
+  content: string
+}
+
+/** Keep the demo context bounded. The system prompt is sent separately. */
+const MAX_LLM_CONTEXT_MESSAGES = 20
 
 // ── Error boundary ──────────────────────────────────────────────
 
@@ -426,13 +465,18 @@ function App() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     { role: 'assistant', text: '你好！配置 API Key 后即可对话生成页面。也可以直接选择上方示例预览。' },
   ])
+  const [llmHistory, setLlmHistory] = useState<LLMHistoryMessage[]>([])
   const [surface, setSurface] = useState<A2UISurface>(
-    () => toSurface([DASHBOARD_SAMPLE, DASHBOARD_DATA], 'dashboard'),
+    () => ATTENDANCE_SURFACE,
   )
-  const [rawJSONL, setRawJSONL] = useState<string>('')
+  const [rawJSONL, setRawJSONL] = useState<string>(attendanceJsonl)
   const [input, setInput] = useState('')
   const [showCatalog, setShowCatalog] = useState(false)
+  const [showImport, setShowImport] = useState(false)
+  const [importJSONL, setImportJSONL] = useState('')
+  const [importError, setImportError] = useState('')
   const [viewMode, setViewMode] = useState<'preview' | 'a2ui' | 'ir' | 'code'>('preview')
+  const [chatOpen, setChatOpen] = useState(true)
   const [renderKey, setRenderKey] = useState(0)
   const [generatedCode, setGeneratedCode] = useState<string>('')
   const chatEndRef = useRef<HTMLDivElement>(null)
@@ -447,6 +491,36 @@ function App() {
   function handleGenerateCode() {
     setGeneratedCode(generateReactCode(surface))
     setViewMode('code')
+  }
+
+  function openImport() {
+    setImportJSONL(rawJSONL)
+    setImportError('')
+    setShowImport(true)
+  }
+
+  function handleImportJSONL() {
+    const source = importJSONL.trim()
+    if (!source) {
+      setImportError('请先粘贴 A2UI JSONL。')
+      return
+    }
+
+    try {
+      const next = parseA2UIMessages(source)
+      setRawJSONL(source)
+      setSurfaceWithKey(next)
+      setViewMode('preview')
+      setGeneratedCode('')
+      setImportError('')
+      setShowImport(false)
+      setMessages(prev => [
+        ...prev,
+        { role: 'assistant', text: `✅ 已导入「${next.surfaceId}」页面（${next.components.length} 个组件）` },
+      ])
+    } catch (err) {
+      setImportError(err instanceof A2UIParseError ? err.message : String(err))
+    }
   }
 
   async function handleSend(e?: FormEvent) {
@@ -472,6 +546,15 @@ function App() {
     }
 
     const systemPrompt = buildSystemPrompt()
+    // Reserve one slot for the current user message. Keep the assistant's
+    // raw A2UI JSONL, not the display-only summary shown in the chat panel.
+    const previousMessages = llmHistory.slice(-(MAX_LLM_CONTEXT_MESSAGES - 1))
+    const userMessage: LLMHistoryMessage = { role: 'user', content: text }
+    const requestMessages: LLMHistoryMessage[] = [
+      ...previousMessages,
+      userMessage,
+    ]
+    setLlmHistory(prev => [...prev, userMessage].slice(-MAX_LLM_CONTEXT_MESSAGES))
     const startTime = Date.now()
 
     try {
@@ -485,7 +568,7 @@ function App() {
           model: config.model,
           messages: [
             { role: 'system', content: systemPrompt },
-            { role: 'user', content: text },
+            ...requestMessages,
           ],
           temperature: 0.2,
         }),
@@ -499,6 +582,8 @@ function App() {
       const data = await response.json()
       const rawContent: string = data.choices?.[0]?.message?.content ?? ''
       const jsonl = extractJSONL(rawContent)
+      const assistantMessage: LLMHistoryMessage = { role: 'assistant', content: rawContent }
+      setLlmHistory(prev => [...prev, assistantMessage].slice(-MAX_LLM_CONTEXT_MESSAGES))
       const elapsed = ((Date.now() - startTime) / 1000).toFixed(1)
 
       // Parse JSONL → surface
@@ -559,6 +644,7 @@ function App() {
     setRawJSONL('')
     setViewMode('preview')
     setGeneratedCode('')
+    setLlmHistory([])
     setMessages(prev => [
       ...prev,
       { role: 'user', text: `加载示例：${key}` },
@@ -570,138 +656,223 @@ function App() {
 
   return (
     <div style={PAGE_STYLE.container}>
-      {/* ── Chat panel ─────────────────────────────────────── */}
-      <div style={PAGE_STYLE.chat}>
-        <div style={{ ...PAGE_STYLE.chatHeader, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span>A2UI Demo</span>
-          <button
-            onClick={() => setShowSettings(prev => !prev)}
-            style={{
-              background: 'none', border: 'none', cursor: 'pointer', fontSize: 16,
-              color: S.textSec, padding: '2px 6px', borderRadius: 4,
-            }}
-            title="LLM 配置"
-          >
-            {showSettings ? '✕' : '⚙'}
-          </button>
-        </div>
-        {showSettings ? (
-          <div style={{ padding: '12px', borderBottom: S.border, fontSize: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <span style={{ color: S.textSec, width: 60, flexShrink: 0 }}>API Key</span>
-              <input
-                type="password"
-                value={config.apiKey}
-                onChange={e => saveConfig({ apiKey: e.target.value })}
-                placeholder="sk-..."
-                style={{ flex: 1, background: S.controlBg, border: `1px solid ${S.controlBorder}`, borderRadius: 4, padding: '4px 8px', color: S.text, fontSize: 12 }}
-              />
-            </div>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <span style={{ color: S.textSec, width: 60, flexShrink: 0 }}>Base URL</span>
-              <input
-                value={config.baseUrl}
-                onChange={e => saveConfig({ baseUrl: e.target.value })}
-                style={{ flex: 1, background: S.controlBg, border: `1px solid ${S.controlBorder}`, borderRadius: 4, padding: '4px 8px', color: S.text, fontSize: 12 }}
-              />
-            </div>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <span style={{ color: S.textSec, width: 60, flexShrink: 0 }}>Model</span>
-              <input
-                value={config.model}
-                onChange={e => saveConfig({ model: e.target.value })}
-                style={{ flex: 1, background: S.controlBg, border: `1px solid ${S.controlBorder}`, borderRadius: 4, padding: '4px 8px', color: S.text, fontSize: 12 }}
-              />
-            </div>
-            <div style={{ color: S.muted, fontSize: 11, marginTop: 4 }}>
-              配置保存在浏览器 localStorage，不会上传到任何服务器。
-            </div>
+      {/* ── Chat panel — lives in a closable left drawer so the A2UI page gets full width ─ */}
+      <HDrawer
+        open={chatOpen}
+        onOpenChange={({ open }) => setChatOpen(open)}
+        placement="left"
+        size="380px"
+        title="A2UI 工具箱"
+        description="浏览示例、导入 A2UI JSONL 或与 LLM 对话生成页面"
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: 0 }}>
+          {/* Navigation — mirrors the production replica's sidebar */}
+          <div className="a2ui-drawer-nav">
+            <HNavMenu
+              items={DRAWER_NAV_ITEMS}
+              mode="inline"
+              theme="dark"
+              triggerSubMenuAction="click"
+              defaultSelectedKeys={['device-info']}
+              defaultOpenKeys={['basic-info', 'operation-records', 'operation-management']}
+              className="a2ui-drawer-nav__menu"
+            />
           </div>
-        ) : null}
-        <div style={PAGE_STYLE.sampleBar}>
-          {Object.keys(SAMPLES).map(key => (
-            <button key={key} style={PAGE_STYLE.sampleBtn} onClick={() => loadSample(key)}>
-              {key}
-            </button>
-          ))}
-          <button
-            style={PAGE_STYLE.catalogBtn}
-            onClick={() => setShowCatalog(prev => !prev)}
-          >
-            {showCatalog ? '收起 Catalog' : '查看 Catalog'}
-          </button>
-          <button
-            style={{
-              ...PAGE_STYLE.catalogBtn,
-              background: viewMode === 'a2ui' ? 'var(--ui-color-primary)' : PAGE_STYLE.catalogBtn.background,
-              color: viewMode === 'a2ui' ? 'white' : PAGE_STYLE.catalogBtn.color,
-            }}
-            onClick={() => setViewMode(prev => prev === 'a2ui' ? 'preview' : 'a2ui')}
-          >
-            {viewMode === 'a2ui' ? '返回预览' : '查看 A2UI'}
-          </button>
-          <button
-            style={{
-              ...PAGE_STYLE.catalogBtn,
-              background: viewMode === 'ir' ? 'var(--ui-color-primary)' : PAGE_STYLE.catalogBtn.background,
-              color: viewMode === 'ir' ? 'white' : PAGE_STYLE.catalogBtn.color,
-            }}
-            onClick={() => setViewMode(prev => prev === 'ir' ? 'preview' : 'ir')}
-          >
-            {viewMode === 'ir' ? '返回预览' : '查看 IR'}
-          </button>
-          <button
-            style={{
-              ...PAGE_STYLE.catalogBtn,
-              background: viewMode === 'code' ? 'var(--ui-color-primary)' : PAGE_STYLE.catalogBtn.background,
-              color: viewMode === 'code' ? 'white' : PAGE_STYLE.catalogBtn.color,
-            }}
-            onClick={() => viewMode === 'code' ? setViewMode('preview') : handleGenerateCode()}
-          >
-            {viewMode === 'code' ? '返回预览' : '生成代码'}
-          </button>
-        </div>
-        <div style={PAGE_STYLE.messages}>
-          {messages.map((msg, i) => (
-            <div
-              key={i}
-              style={{
-                padding: '8px 12px',
-                borderRadius: 8,
-                background: msg.role === 'user' ? 'rgba(99,102,241,0.15)' : 'rgba(255,255,255,0.04)',
-                fontSize: 13,
-                lineHeight: 1.6,
-                whiteSpace: 'pre-wrap',
-              }}
-            >
-              {msg.text}
-            </div>
-          ))}
-          {showCatalog ? (
-            <div style={{ marginTop: 8, padding: 12, background: 'rgba(255,255,255,0.03)', borderRadius: 8, maxHeight: 300, overflow: 'auto' }}>
-              <pre style={{ fontSize: 11, whiteSpace: 'pre-wrap', color: '#aaa' }}>
-                {systemPrompt?.slice(0, 3000)}...
-              </pre>
+          <div className="a2ui-drawer-divider" />
+
+          <div style={{ ...PAGE_STYLE.chatHeader, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>A2UI Demo</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <button
+                onClick={() => setShowSettings(prev => !prev)}
+                style={{
+                  background: 'none', border: 'none', cursor: 'pointer', fontSize: 16,
+                  color: S.textSec, padding: '2px 6px', borderRadius: 4,
+                }}
+                title="LLM 配置"
+              >
+                {showSettings ? '✕' : '⚙'}
+              </button>
+              <button
+                onClick={() => setChatOpen(false)}
+                style={{
+                  background: 'none', border: 'none', cursor: 'pointer', fontSize: 14,
+                  color: S.textSec, padding: '2px 6px', borderRadius: 4,
+                }}
+                title="收起面板"
+              >
+                ◀
+              </button>
+            </span>
+          </div>
+          {showSettings ? (
+            <div style={{ padding: '12px', borderBottom: S.border, fontSize: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <span style={{ color: S.textSec, width: 60, flexShrink: 0 }}>API Key</span>
+                <input
+                  type="password"
+                  value={config.apiKey}
+                  onChange={e => saveConfig({ apiKey: e.target.value })}
+                  placeholder="sk-..."
+                  style={{ flex: 1, background: S.controlBg, border: `1px solid ${S.controlBorder}`, borderRadius: 4, padding: '4px 8px', color: S.text, fontSize: 12 }}
+                />
+              </div>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <span style={{ color: S.textSec, width: 60, flexShrink: 0 }}>Base URL</span>
+                <input
+                  value={config.baseUrl}
+                  onChange={e => saveConfig({ baseUrl: e.target.value })}
+                  style={{ flex: 1, background: S.controlBg, border: `1px solid ${S.controlBorder}`, borderRadius: 4, padding: '4px 8px', color: S.text, fontSize: 12 }}
+                />
+              </div>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <span style={{ color: S.textSec, width: 60, flexShrink: 0 }}>Model</span>
+                <input
+                  value={config.model}
+                  onChange={e => saveConfig({ model: e.target.value })}
+                  style={{ flex: 1, background: S.controlBg, border: `1px solid ${S.controlBorder}`, borderRadius: 4, padding: '4px 8px', color: S.text, fontSize: 12 }}
+                />
+              </div>
+              <div style={{ color: S.muted, fontSize: 11, marginTop: 4 }}>
+                配置保存在浏览器 localStorage，不会上传到任何服务器。
+              </div>
             </div>
           ) : null}
-          <div ref={chatEndRef} />
+          <div style={PAGE_STYLE.sampleBar}>
+            {Object.keys(SAMPLES).map(key => (
+              <button key={key} style={PAGE_STYLE.sampleBtn} onClick={() => loadSample(key)}>
+                {key}
+              </button>
+            ))}
+            <button
+              style={PAGE_STYLE.catalogBtn}
+              onClick={() => setShowCatalog(prev => !prev)}
+            >
+              {showCatalog ? '收起 Catalog' : '查看 Catalog'}
+            </button>
+            <button
+              style={{
+                ...PAGE_STYLE.catalogBtn,
+                background: viewMode === 'a2ui' ? 'var(--ui-color-primary)' : PAGE_STYLE.catalogBtn.background,
+                color: viewMode === 'a2ui' ? 'white' : PAGE_STYLE.catalogBtn.color,
+              }}
+              onClick={() => setViewMode(prev => prev === 'a2ui' ? 'preview' : 'a2ui')}
+            >
+              {viewMode === 'a2ui' ? '返回预览' : '查看 A2UI'}
+            </button>
+            <button
+              style={{
+                ...PAGE_STYLE.catalogBtn,
+                background: viewMode === 'ir' ? 'var(--ui-color-primary)' : PAGE_STYLE.catalogBtn.background,
+                color: viewMode === 'ir' ? 'white' : PAGE_STYLE.catalogBtn.color,
+              }}
+              onClick={() => setViewMode(prev => prev === 'ir' ? 'preview' : 'ir')}
+            >
+              {viewMode === 'ir' ? '返回预览' : '查看 IR'}
+            </button>
+            <button
+              style={{
+                ...PAGE_STYLE.catalogBtn,
+                background: viewMode === 'code' ? 'var(--ui-color-primary)' : PAGE_STYLE.catalogBtn.background,
+                color: viewMode === 'code' ? 'white' : PAGE_STYLE.catalogBtn.color,
+              }}
+              onClick={() => viewMode === 'code' ? setViewMode('preview') : handleGenerateCode()}
+            >
+              {viewMode === 'code' ? '返回预览' : '生成代码'}
+            </button>
+            <button
+              style={{
+                ...PAGE_STYLE.catalogBtn,
+                background: showImport ? 'var(--ui-color-primary)' : PAGE_STYLE.catalogBtn.background,
+                color: showImport ? 'white' : PAGE_STYLE.catalogBtn.color,
+              }}
+              onClick={() => openImport()}
+            >
+              导入 A2UI
+            </button>
+          </div>
+          {showImport ? (
+            <div style={{ padding: '10px 12px', borderBottom: S.border, display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <HTextarea
+                label="JSONL"
+                value={importJSONL}
+                rows={10}
+                placeholder={'{"version":"v0.9.1","createSurface":{...}}'}
+                onValueChange={({ value }) => setImportJSONL(value)}
+              />
+              {importError ? (
+                <div style={{ color: '#ef4444', fontSize: 12, whiteSpace: 'pre-wrap' }}>
+                  {importError}
+                </div>
+              ) : null}
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+                <button className="ui-button ui-button--secondary" type="button" onClick={() => setShowImport(false)}>
+                  取消
+                </button>
+                <button className="ui-button ui-button--primary" type="button" onClick={handleImportJSONL}>
+                  导入并预览
+                </button>
+              </div>
+            </div>
+          ) : null}
+          <div style={PAGE_STYLE.messages}>
+            {messages.map((msg, i) => (
+              <div
+                key={i}
+                style={{
+                  padding: '8px 12px',
+                  borderRadius: 8,
+                  background: msg.role === 'user' ? 'rgba(99,102,241,0.15)' : 'rgba(255,255,255,0.04)',
+                  fontSize: 13,
+                  lineHeight: 1.6,
+                  whiteSpace: 'pre-wrap',
+                }}
+              >
+                {msg.text}
+              </div>
+            ))}
+            {showCatalog ? (
+              <div style={{ marginTop: 8, padding: 12, background: 'rgba(255,255,255,0.03)', borderRadius: 8, maxHeight: 300, overflow: 'auto' }}>
+                <pre style={{ fontSize: 11, whiteSpace: 'pre-wrap', color: '#aaa' }}>
+                  {systemPrompt?.slice(0, 3000)}...
+                </pre>
+              </div>
+            ) : null}
+            <div ref={chatEndRef} />
+          </div>
+          <form style={PAGE_STYLE.inputArea} onSubmit={handleSend}>
+            <input
+              style={PAGE_STYLE.input}
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              placeholder={isGenerating ? '生成中...' : '描述你想要的页面...'}
+              disabled={isGenerating}
+            />
+            <button type="submit" style={{ ...PAGE_STYLE.sendBtn, opacity: isGenerating ? 0.5 : 1 }} disabled={isGenerating}>
+              {isGenerating ? '...' : '发送'}
+            </button>
+          </form>
         </div>
-        <form style={PAGE_STYLE.inputArea} onSubmit={handleSend}>
-          <input
-            style={PAGE_STYLE.input}
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            placeholder={isGenerating ? '生成中...' : '描述你想要的页面...'}
-            disabled={isGenerating}
-          />
-          <button type="submit" style={{ ...PAGE_STYLE.sendBtn, opacity: isGenerating ? 0.5 : 1 }} disabled={isGenerating}>
-            {isGenerating ? '...' : '发送'}
-          </button>
-        </form>
-      </div>
+      </HDrawer>
 
-      {/* ── Preview panel — runtime renderer, A2UI view, or code view ─ */}
-      <div style={PAGE_STYLE.preview}>
+      {/* ── Floating reopen trigger when the drawer is closed ── */}
+      {!chatOpen && (
+        <button
+          onClick={() => setChatOpen(true)}
+          style={{
+            position: 'fixed', top: 16, left: 16, zIndex: 60,
+            width: 36, height: 36, borderRadius: 8,
+            background: S.primary, color: '#fff', border: 'none', cursor: 'pointer', fontSize: 16,
+            boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+          }}
+          title="打开工具箱"
+        >
+          ☰
+        </button>
+      )}
+
+      {/* ── Preview panel — full width so the A2UI page gets the stage ─ */}
+      <div className="production-replica a2ui-production-preview" style={PAGE_STYLE.preview}>
         {viewMode === 'a2ui' ? (
           <div style={{ height: '100%' }}>
             <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 12, color: S.text }}>
@@ -830,6 +1001,7 @@ function App() {
           </ErrorBoundary>
         )}
       </div>
+
     </div>
   )
 }

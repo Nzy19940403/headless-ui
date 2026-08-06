@@ -227,6 +227,22 @@ describe('catalog', () => {
       expect(entry.label).toBeTruthy()
     }
   })
+
+  it('exposes contract capabilities for Table', () => {
+    const table = getCatalogEntry('Table')
+    expect(table?.props.map(prop => prop.name)).toEqual(expect.arrayContaining([
+      'draggable',
+      'resizeable',
+      'enableColumnOrdering',
+      'columnOrder',
+      'rowDraggable',
+      'rowOrder',
+      'defaultRowOrder',
+      'onRowOrderChange',
+      'enableExpanding',
+      'loading',
+    ]))
+  })
 })
 
 // ── Codegen ────────────────────────────────────────────────────────
@@ -571,6 +587,68 @@ describe('generateReactCode', () => {
     ])
     const code = generateReactCode(surface)
     expect(code).toContain("selectedKeys={['dashboard']")
+  })
+
+  it('emits Table capability props supported by HTable', () => {
+    const surface = parseA2UIMessages([
+      {
+        version: A2UI_VERSION,
+        createSurface: { surfaceId: 'table-capabilities', catalogId: 'c' },
+      },
+      {
+        version: A2UI_VERSION,
+        updateComponents: {
+          surfaceId: 'table-capabilities',
+          components: [
+            { id: 'root', component: 'Page', title: 'T', children: ['table'] },
+            {
+              id: 'table',
+              component: 'Table',
+              columns: [{ accessorKey: 'name', header: 'Name' }],
+              dataSource: [{ name: 'Alice' }],
+              draggable: true,
+              resizeable: true,
+              enableExpanding: true,
+              loading: true,
+            },
+          ],
+        },
+      },
+    ])
+    const code = generateReactCode(surface)
+    expect(code).toContain('draggable={true}')
+    expect(code).toContain('resizeable={true}')
+    expect(code).toContain('enableExpanding={true}')
+    expect(code).toContain('loading={true}')
+  })
+
+  it('emits Table row drag-and-drop reorder props', () => {
+    const surface = parseA2UIMessages([
+      {
+        version: A2UI_VERSION,
+        createSurface: { surfaceId: 'table-row-reorder', catalogId: 'c' },
+      },
+      {
+        version: A2UI_VERSION,
+        updateComponents: {
+          surfaceId: 'table-row-reorder',
+          components: [
+            { id: 'root', component: 'Page', title: 'T', children: ['table'] },
+            {
+              id: 'table',
+              component: 'Table',
+              columns: [{ accessorKey: 'name', header: 'Name' }],
+              dataSource: [{ name: 'Alice' }, { name: 'Bob' }],
+              rowDraggable: true,
+              defaultRowOrder: ['2', '1'],
+            },
+          ],
+        },
+      },
+    ])
+    const code = generateReactCode(surface)
+    expect(code).toContain('rowDraggable={true}')
+    expect(code).toContain("defaultRowOrder={['2', '1']}")
   })
 })
 

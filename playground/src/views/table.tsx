@@ -11,6 +11,7 @@ import type {
   TableColumnSizingState,
   TableExpandedState,
   TableRowData,
+  TableRowOrderState,
   TableSortingState,
 } from '@demo/ui-core'
 
@@ -479,7 +480,11 @@ function ReactTableFullDemo() {
   const [draggable, setDraggable] = useState(true)
   const [columnOrder, setColumnOrder] = useState<TableColumnOrderState>(defaultOrder)
   const [columnSizing, setColumnSizing] = useState<TableColumnSizingState>({})
+  const [rowDraggable, setRowDraggable] = useState(true)
+  const [rowOrder, setRowOrder] = useState<TableRowOrderState>([])
   const [expanded, setExpanded] = useState<TableExpandedState>({ '0': true })
+
+  const getRowId = (row: TableRowData) => String(row.project ?? row.owner ?? '')
 
   const tableData = useMemo(() => (emptyMode ? [] : data), [emptyMode])
   const pageCount = Math.max(1, Math.ceil(tableData.length / pageSize) || 1)
@@ -501,6 +506,8 @@ function ReactTableFullDemo() {
     `density=${density}`,
     `resize=${resizeable}`,
     `drag=${draggable}`,
+    `rowDrag=${rowDraggable}`,
+    `rowOrder=${rowOrder.length ? rowOrder.join('›') : '(default)'}`,
     `fillHeight=${fillHeight}`,
   ].join(' · ')
 
@@ -534,6 +541,9 @@ function ReactTableFullDemo() {
         </HButton>
         <HButton size="sm" variant="secondary" onClick={() => setDraggable(v => !v)}>
           draggable: {String(draggable)}
+        </HButton>
+        <HButton size="sm" variant="secondary" onClick={() => setRowDraggable(v => !v)}>
+          rowDraggable: {String(rowDraggable)}
         </HButton>
         <HButton size="sm" variant="secondary" onClick={() => setFillHeight(v => !v)}>
           fillHeight: {String(fillHeight)}
@@ -593,6 +603,10 @@ function ReactTableFullDemo() {
           draggable={draggable}
           columnOrder={columnOrder}
           onColumnOrderChange={d => setColumnOrder(d.order)}
+          rowDraggable={rowDraggable}
+          getRowId={getRowId}
+          rowOrder={rowOrder}
+          onRowOrderChange={d => setRowOrder(d.rowOrder)}
           enableExpanding
           lazyMount
           unmountOnExit={false}

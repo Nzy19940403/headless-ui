@@ -162,26 +162,91 @@ function StatCardRenderer({ props }: { props: PropRecord }) {
 function TextRenderer({ props }: { props: PropRecord }) {
   const content = props.content as ReactNode ?? ''
   const strong = props.strong === true
-  if (strong) return <strong>{content}</strong>
-  return <span>{content}</span>
+  const cls = (props.className as string) || undefined
+  if (strong) return <strong className={cls}>{content}</strong>
+  return <span className={cls}>{content}</span>
+}
+
+function ImageRenderer({ props }: { props: PropRecord }) {
+  const src = props.src as string
+  if (!src) return null
+  return (
+    <img
+      src={src}
+      alt={(props.alt as string) ?? ''}
+      width={props.width as number | undefined}
+      height={props.height as number | undefined}
+      className={props.className as string | undefined}
+      style={props.style as React.CSSProperties | undefined}
+    />
+  )
+}
+
+function HeaderRenderer({ props, menuCollapsed, onToggleMenu }: {
+  props: PropRecord
+  menuCollapsed: boolean
+  onToggleMenu: () => void
+}) {
+  const brand = (props.brand as string) ?? ''
+  const logo = props.logo as string | undefined
+  const navItems = (props.navItems as Array<{ key: string; label: string }>) ?? []
+  const navActive = props.navActive as string | undefined
+  const project = props.project as string | undefined
+  const welcome = props.welcome as string | undefined
+  const mark = props.mark as string | undefined
+
+  return (
+    <div className="a2ui-header">
+      <div className="a2ui-header__brand">
+        {logo && <img className="a2ui-header__logo" src={logo} alt={brand} />}
+        {brand && <strong>{brand}</strong>}
+      </div>
+      <button
+        className="a2ui-header__menu-btn"
+        type="button"
+        aria-label={menuCollapsed ? '展开菜单' : '收起菜单'}
+        aria-expanded={!menuCollapsed}
+        onClick={onToggleMenu}
+      >
+        ☰
+      </button>
+      <nav className="a2ui-header__nav" aria-label="主导航">
+        {navItems.map(item => (
+          <span
+            key={item.key}
+            className={item.key === navActive ? 'a2ui-header__nav-item a2ui-header__nav-item--active' : 'a2ui-header__nav-item'}
+          >
+            {item.label}
+          </span>
+        ))}
+      </nav>
+      {(project || welcome || mark) && (
+        <div className="a2ui-header__user">
+          {project && <span className="a2ui-header__project">项目：{project}</span>}
+          {welcome && <span className="a2ui-header__welcome">{welcome}</span>}
+          {mark && <span className="a2ui-header__mark">{mark}</span>}
+        </div>
+      )}
+    </div>
+  )
 }
 
 function BadgeRenderer({ props }: { props: PropRecord }) {
   const tone = (props.tone as string) ?? 'neutral'
   const text = (props.text as string) ?? ''
-  return <UiReact.HBadge tone={tone as UiReact.HBadgeProps['tone']}>{text}</UiReact.HBadge>
+  return <UiReact.HBadge {...omit(props, 'text')} tone={tone as UiReact.HBadgeProps['tone']}>{text}</UiReact.HBadge>
 }
 
 function TagRenderer({ props }: { props: PropRecord }) {
   const tone = (props.tone as string) ?? 'neutral'
   const content = (props.content as string) ?? ''
-  return <UiReact.HTag tone={tone as UiReact.HTagProps['tone']} content={content} />
+  return <UiReact.HTag {...omit(props, 'content')} tone={tone as UiReact.HTagProps['tone']} content={content} />
 }
 
 function ProgressRenderer({ props }: { props: PropRecord }) {
   const value = (props.value as number) ?? 0
   const label = props.label as string | undefined
-  return <UiReact.HProgress value={value} label={label} />
+  return <UiReact.HProgress {...omit(props, 'value', 'label')} value={value} label={label} />
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -215,7 +280,8 @@ function InputRenderer({ props, boundFields, onValueChange }: {
 
   return (
     <UiReact.HInput
-      size="md"
+      {...omit(props, 'value', 'onValueChange')}
+      size={(props.size as UiReact.HInputProps['size']) ?? 'md'}
       label={props.label as string}
       placeholder={props.placeholder as string}
       type={(props.type as UiReact.HInputProps['type']) ?? 'text'}
@@ -243,9 +309,7 @@ function NumberInputRenderer({ props, boundFields, onValueChange }: {
 
   return (
     <UiReact.HNumberInput
-      label={props.label as string}
-      required={Boolean(props.required)}
-      disabled={Boolean(props.disabled)}
+      {...omit(props, 'value', 'onValueChange')}
       value={fieldPath ? localValue : (props.value as number)}
       onValueChange={fieldPath ? handleChange : undefined}
     />
@@ -268,11 +332,7 @@ function TextareaRenderer({ props, boundFields, onValueChange }: {
 
   return (
     <UiReact.HTextarea
-      label={props.label as string}
-      placeholder={props.placeholder as string}
-      rows={props.rows as number}
-      required={Boolean(props.required)}
-      disabled={Boolean(props.disabled)}
+      {...omit(props, 'value', 'onValueChange')}
       value={fieldPath ? localValue : (props.value as string)}
       onValueChange={fieldPath ? handleChange : undefined}
     />
@@ -295,7 +355,7 @@ function SelectRenderer({ props, boundFields, onValueChange }: {
 
   return (
     <UiReact.HSelect
-      label={props.label as string}
+      {...omit(props, 'value', 'onValueChange')}
       items={(props.items as Array<{ value: string; label: string }>) ?? []}
       value={fieldPath ? localValue : (props.value as string)}
       onValueChange={fieldPath ? handleChange : undefined}
@@ -321,6 +381,7 @@ function CheckboxRenderer({ props, boundFields, onValueChange }: {
 
   return (
     <UiReact.HCheckbox
+      {...omit(props, 'checked', 'onCheckedChange')}
       label={props.label as string}
       checked={fieldPath ? localChecked : Boolean(props.checked)}
       onCheckedChange={fieldPath ? handleChange : (props.onCheckedChange as CheckedChangeHandler)}
@@ -343,6 +404,7 @@ function ToggleRenderer({ props, boundFields, onValueChange }: {
 
   return (
     <UiReact.HToggle
+      {...omit(props, 'checked', 'onCheckedChange')}
       checked={fieldPath ? localChecked : Boolean(props.checked)}
       onCheckedChange={fieldPath ? handleChange : (props.onCheckedChange as CheckedChangeHandler)}
     />
@@ -365,7 +427,7 @@ function DatePickerRenderer({ props, boundFields, onValueChange }: {
 
   return (
     <UiReact.HDatePicker
-      label={props.label as string}
+      {...omit(props, 'value', 'onValueChange')}
       value={fieldPath ? localValue : props.value}
       onValueChange={fieldPath ? handleChange : undefined}
     />
@@ -392,6 +454,7 @@ function ButtonRenderer({ props, onAction }: {
       size={size as UiReact.HButtonProps['size']}
       disabled={disabled}
       onClick={handleClick}
+      className={(props.className as string) || undefined}
     >
       {label}
     </UiReact.HButton>
@@ -415,16 +478,61 @@ function ButtonGroupRenderer({ props }: { props: PropRecord }) {
   )
 }
 
-function TableRenderer({ props }: { props: PropRecord }) {
+function TableRenderer({ props, children }: {
+  props: PropRecord
+  children?: ReactNode
+}) {
+  const detailFields = (props.detailFields as Array<{ key: string; label: string }>) ?? []
+  const expandEnabled = Boolean(props.enableExpanding)
+  const dataSource = (props.dataSource as Array<Record<string, unknown>>) ?? []
+  // When the JSON declares a custom pagination row (externalPagination), the
+  // table renders the caller's pagination below and suppresses its built-in one.
+  const externalPagination = Boolean(props.externalPagination)
   return (
-    <UiReact.HTable
+    <div className="a2ui-table-wrap ui-table-wrap--grow">
+      <UiReact.HTable
+      {...omit(props, 'columns', 'dataSource', 'enablePagination', 'pageSize', 'enableSorting', 'density', 'enableExpanding', 'detailFields', 'externalPagination')}
       columns={(props.columns as Array<{ accessorKey: string; header: string }>) ?? []}
-      data={(props.dataSource as Array<Record<string, unknown>>) ?? []}
+      data={dataSource}
       caption={props.caption as string}
-      enablePagination={Boolean(props.enablePagination)}
+      enablePagination={externalPagination ? false : Boolean(props.enablePagination)}
       pageSize={(props.pageSize as number) ?? 10}
       enableSorting={props.enableSorting !== false}
       density={((props.density as string) ?? 'comfortable') as UiReact.HTableProps['density']}
+      enableExpanding={expandEnabled}
+      renderExpanded={expandEnabled ? row => (
+        <div className="a2ui-table-detail">
+          <div className="a2ui-table-detail__grid">
+            {detailFields.map(field => (
+              <div key={field.key} className="a2ui-table-detail__item">
+                <span className="a2ui-table-detail__label">{field.label}</span>
+                <span className="a2ui-table-detail__value">{String((row.original as Record<string, unknown>)[field.key] ?? '—')}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : undefined}
+      />
+      {externalPagination && children}
+    </div>
+  )
+}
+
+type A2UITreeNode = { id: string; label: string; disabled?: boolean; children?: A2UITreeNode[] }
+
+function TreeSelectRenderer({ props }: { props: PropRecord }) {
+  return (
+    <UiReact.HTreeSelect
+      {...omit(props, 'onValueChange')}
+      nodes={(props.nodes as A2UITreeNode[] | undefined) ?? []}
+      placeholder={props.placeholder as string}
+      selectBranches={Boolean(props.selectBranches)}
+      multiple={Boolean(props.multiple)}
+      height={props.height as number | string | undefined}
+      columnWidths={props.columnWidths as Array<number | string> | undefined}
+      value={props.value as string | string[] | undefined}
+      defaultValue={props.defaultValue as string | string[] | undefined}
+      onValueChange={props.onValueChange as UiReact.HTreeSelectProps['onValueChange']}
     />
   )
 }
@@ -457,6 +565,7 @@ function AlertRenderer({ props }: { props: PropRecord }) {
 function ChartRenderer({ props }: { props: PropRecord }) {
   return (
     <UiReact.HChart
+      {...omit(props, 'type')}
       type={(props.type as UiReact.HChartProps['type']) ?? 'line'}
       title={props.title as string}
       height={props.height as number}
@@ -471,14 +580,19 @@ function ChartRenderer({ props }: { props: PropRecord }) {
   )
 }
 
-function NavMenuRenderer({ props }: { props: PropRecord }) {
+function NavMenuRenderer({ props, menuCollapsed }: {
+  props: PropRecord
+  menuCollapsed: boolean
+}) {
   const rawItems = (props.items as Array<{ value: string; label: string }>) ?? []
   // NavMenuItemContract requires `key` — use value as key
   const items = rawItems.map(item => ({ ...item, key: item.value }))
   return (
     <UiReact.HNavMenu
+      {...omit(props, 'items', 'selectedKeys', 'inlineCollapsed')}
       items={items as Array<UiReact.HNavMenuItem>}
       selectedKeys={props.selectedKeys as string[]}
+      inlineCollapsed={menuCollapsed}
     />
   )
 }
@@ -495,7 +609,14 @@ function TabsRenderer({ props, renderChild }: {
     return { value: item.value, label: item.label, key: item.value, content: contentMap[item.value] }
   })
 
-  return <UiReact.HTabs defaultValue={rawItems[0]?.value} items={items} />
+  return (
+    <UiReact.HTabs
+      {...omit(props, 'items', 'value', 'defaultValue')}
+      value={props.value as string | undefined}
+      defaultValue={(props.defaultValue as string | undefined) ?? rawItems[0]?.value}
+      items={items}
+    />
+  )
 }
 
 function DialogRenderer({ props, renderChild }: {
@@ -534,12 +655,16 @@ function A2UINode({
   data,
   onDataChange,
   onAction,
+  menuCollapsed,
+  onToggleMenu,
 }: {
   node: A2UIComponent
   map: Map<string, A2UIComponent>
   data: Record<string, unknown>
   onDataChange?: InputChangeHandler
   onAction?: (action: { name: string; context: Record<string, unknown> }) => void
+  menuCollapsed: boolean
+  onToggleMenu: () => void
 }): ReactNode {
   const { component, props, childIds, boundFields } = resolveProps(node, data)
   const childNodes = childIds.map(id => map.get(id)).filter((c): c is A2UIComponent => c != null)
@@ -555,6 +680,8 @@ function A2UINode({
         data={data}
         onDataChange={onDataChange}
         onAction={onAction}
+        menuCollapsed={menuCollapsed}
+        onToggleMenu={onToggleMenu}
       />
     )
   }
@@ -578,19 +705,56 @@ function A2UINode({
   if (component === 'Row') {
     const gap = (props.gap as string) ?? 'md'
     const justify = props.justify as UiReact.HStackProps['justify']
-    return <UiReact.HStack gap={gap as UiReact.HStackProps['gap']} justify={justify}>{renderChildren()}</UiReact.HStack>
+    const cls = (props.className as string) || undefined
+    const split = props.split as 'left' | 'right' | boolean | undefined
+    // A split row lays out as a fixed sidebar + flexible content (HSplit grid).
+    // Mirrors the production replica shell (sidebar 190px, content fills).
+    if (split) {
+      const side = split === 'right' ? 'sidebar-right' : 'sidebar-left'
+      const rawWidth = (props.sidebarWidth as string | number | undefined) ?? 190
+      const rawCollapsed = (props.collapsedWidth as string | number | undefined) ?? 64
+      const sidebarWidth = menuCollapsed ? String(rawCollapsed) : String(rawWidth)
+      return (
+        <UiReact.HSplit
+          ratio={side as UiReact.HSplitProps['ratio']}
+          gap={gap as UiReact.HSplitProps['gap']}
+          sidebarWidth={`${sidebarWidth}px`}
+          collapseBelow="never"
+          className={cls}
+        >
+          {renderChildren()}
+        </UiReact.HSplit>
+      )
+    }
+    return (
+      <UiReact.HStack gap={gap as UiReact.HStackProps['gap']} justify={justify} className={cls}>
+        {renderChildren()}
+      </UiReact.HStack>
+    )
   }
   if (component === 'Col') {
+    // Col is a pure flex column. Width is decided by the parent layout —
+    // an HStack flexes it proportionally (span), an HSplit positions it as
+    // a grid cell. No width/collapsedWidth here: that's the split Row's job.
     const span = (props.span as number) ?? 1
+    const cls = (props.className as string) || undefined
     return (
-      <div style={{ flex: span, minWidth: 0 }}>
+      <div style={{ flex: span, minWidth: 0 }} className={cls}>
         {renderChildren()}
       </div>
     )
   }
   if (component === 'VStack') {
     const gap = (props.gap as string) ?? 'md'
-    return <UiReact.HVStack gap={gap as UiReact.HVStackProps['gap']}>{renderChildren()}</UiReact.HVStack>
+    return (
+      <UiReact.HVStack
+        gap={gap as UiReact.HVStackProps['gap']}
+        fillHeight={Boolean(props.fillHeight)}
+        className={(props.className as string) || undefined}
+      >
+        {renderChildren()}
+      </UiReact.HVStack>
+    )
   }
 
   // ── Data display ────────────────────────────────────────
@@ -604,6 +768,10 @@ function A2UINode({
   if (component === 'Progress') return <ProgressRenderer props={props} />
   if (component === 'Separator') return <SeparatorRenderer props={props} />
   if (component === 'Text') return <TextRenderer props={props} />
+  if (component === 'Image') return <ImageRenderer props={props} />
+
+  // ── Page shell ──────────────────────────────────────────
+  if (component === 'Header') return <HeaderRenderer props={props} menuCollapsed={menuCollapsed} onToggleMenu={onToggleMenu} />
 
   // ── Form inputs ─────────────────────────────────────────
   if (component === 'Input') return <InputRenderer props={props} boundFields={boundFields} onValueChange={onDataChange} />
@@ -619,7 +787,8 @@ function A2UINode({
   if (component === 'ButtonGroup') return <ButtonGroupRenderer props={props} />
 
   // ── Complex ─────────────────────────────────────────────
-  if (component === 'Table') return <TableRenderer props={props} />
+  if (component === 'Table') return <TableRenderer props={props} children={renderChildren()} />
+  if (component === 'TreeSelect') return <TreeSelectRenderer props={props} />
   if (component === 'Tabs') return <TabsRenderer props={props} renderChild={renderChild} />
   if (component === 'Chart') return <ChartRenderer props={props} />
 
@@ -628,7 +797,7 @@ function A2UINode({
   if (component === 'Dialog') return <DialogRenderer props={props} renderChild={renderChild} />
 
   // ── Navigation ──────────────────────────────────────────
-  if (component === 'NavMenu') return <NavMenuRenderer props={props} />
+  if (component === 'NavMenu') return <NavMenuRenderer props={props} menuCollapsed={menuCollapsed} />
 
   // ── Fallback ────────────────────────────────────────────
   return (
@@ -653,9 +822,14 @@ function A2UINode({
 export const A2UIRenderer: FC<RendererProps> = ({ surface, onAction }) => {
   const { componentMap, dataModel, rootId } = surface
   const [data, setData] = useState<Record<string, A2UIValue>>(dataModel)
+  const [menuCollapsed, setMenuCollapsed] = useState(false)
 
   const handleDataChange = useCallback((path: string, value: unknown) => {
     setData(prev => setAtPath(prev, path, value))
+  }, [])
+
+  const handleToggleMenu = useCallback(() => {
+    setMenuCollapsed(prev => !prev)
   }, [])
 
   const root = rootId ? componentMap.get(rootId) : undefined
@@ -674,6 +848,8 @@ export const A2UIRenderer: FC<RendererProps> = ({ surface, onAction }) => {
       data={data}
       onDataChange={handleDataChange}
       onAction={onAction}
+      menuCollapsed={menuCollapsed}
+      onToggleMenu={handleToggleMenu}
     />
   )
 }

@@ -95,6 +95,15 @@ export type TableColumnSizingChangeHandler = (details: TableColumnSizingChangeDe
 export type TableColumnOrderChangeHandler = (details: TableColumnOrderChangeDetails) => void
 export type TableExpandedChangeHandler = (details: TableExpandedChangeDetails) => void
 
+/** Stable row order after drag reordering — row ids in display order. */
+export type TableRowOrderState = string[]
+
+export interface TableRowOrderChangeDetails {
+  rowOrder: TableRowOrderState
+}
+
+export type TableRowOrderChangeHandler = (details: TableRowOrderChangeDetails) => void
+
 /**
  * Row data is intentionally untyped at Core (Record).
  * React/Vue can narrow via generics at the HTableProps layer if needed.
@@ -141,6 +150,16 @@ export interface TableContract {
   columnOrder?: TableColumnOrderState
   defaultColumnOrder?: TableColumnOrderState
   onColumnOrderChange?: TableColumnOrderChangeHandler
+
+  /** Enable drag-and-drop row reordering. Default false. */
+  rowDraggable?: boolean
+  /** Row id resolver. TanStack getRowId callback — defaults to row index. */
+  getRowId?: (originalRow: TableRowData, index: number, parent?: TableRowData) => string
+  /** Controlled row order — row ids in display order. */
+  rowOrder?: TableRowOrderState
+  /** Initial row order for uncontrolled row reordering. */
+  defaultRowOrder?: TableRowOrderState
+  onRowOrderChange?: TableRowOrderChangeHandler
 
   /** Enable an expander column and TanStack's expanded row model. */
   enableExpanding?: boolean

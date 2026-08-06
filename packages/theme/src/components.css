@@ -601,6 +601,26 @@ h-dialog [data-part='positioner'][hidden] {
   display: none !important;
 }
 
+/* The A2UI import editor needs more horizontal room than the default dialog. */
+.ui-dialog__content.a2ui-import-dialog {
+  box-sizing: border-box;
+  width: min(760px, calc(100vw - 40px));
+  max-height: calc(100vh - 40px);
+  overflow: auto;
+}
+
+.a2ui-import-dialog__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.a2ui-import-dialog__footer .ui-button {
+  align-self: auto;
+  min-width: 128px;
+}
+
 .ui-dialog__title,
 [data-scope='dialog'] [data-part='title'],
 [data-scope='dialog'][data-part='title'],
@@ -2598,6 +2618,59 @@ h-separator.ui-separator--vertical {
   color: var(--ui-color-text);
 }
 
+.ui-table__td--drag-handle {
+  padding: 0 !important;
+  text-align: center;
+}
+
+.ui-table__row-drag-handle {
+  display: inline-flex;
+  width: 100%;
+  height: 100%;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  color: var(--ui-color-muted);
+  font-size: 16px;
+  user-select: none;
+  touch-action: none;
+}
+
+.ui-table__row-drag-handle:hover {
+  color: var(--ui-color-primary);
+}
+
+.ui-table__tr--row-draggable {
+  cursor: grab;
+}
+
+.ui-table__tr--row-draggable:active,
+.ui-table__tr--dragging {
+  cursor: grabbing;
+}
+
+.ui-table__tr--dragging {
+  opacity: 0.72;
+  box-shadow: var(--ui-shadow-md);
+}
+
+.ui-table__row-drag-overlay {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-width: 120px;
+  border: 1px solid var(--ui-table-drag-overlay-border, var(--ui-color-primary));
+  background: var(--ui-table-drag-overlay-bg, var(--ui-color-canvas-soft, var(--ui-color-surface)));
+  box-shadow: var(--ui-shadow-md);
+  color: var(--ui-table-drag-overlay-text, var(--ui-color-text));
+  pointer-events: none;
+}
+
+.ui-table__row-drag-overlay-cell {
+  padding: var(--ui-table-cell-pad-y, 8px) var(--ui-table-cell-pad-x, 12px);
+  white-space: nowrap;
+}
+
 .ui-table__td--expanded {
   height: auto;
   max-height: none;
@@ -2903,6 +2976,16 @@ h-v-stack.ui-v-stack--fill-height > * {
   min-height: 0;
 }
 
+/* A fill-height v-stack lets a grow child (fill-height table, or a node
+   explicitly marked --grow) reclaim the leftover block size. Plain stacks
+   keep their natural height — only the grow child flexes. */
+.ui-v-stack--fill-height > .ui-table--fill-height,
+.ui-v-stack--fill-height > [class*='--grow'],
+h-v-stack.ui-v-stack--fill-height > .ui-table--fill-height {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
 /* Grid */
 .ui-grid,
 h-grid.ui-grid {
@@ -2935,6 +3018,9 @@ h-split.ui-split {
   gap: var(--ui-layout-gap, var(--ui-space-md));
   align-items: var(--ui-layout-align, stretch);
   grid-template-columns: var(--ui-split-template, 1fr 1fr);
+  /* As a flex child, a split grows to fill the leftover block size. */
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .ui-split > *,

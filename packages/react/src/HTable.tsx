@@ -14,7 +14,7 @@ import {
   type Modifier,
   type UniqueIdentifier,
 } from '@dnd-kit/core'
-import { arrayMove, horizontalListSortingStrategy, SortableContext, sortableKeyboardCoordinates, useSortable } from '@dnd-kit/sortable'
+import { arrayMove, horizontalListSortingStrategy, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import {
   flexRender,
@@ -38,6 +38,7 @@ import type {
   TableExpandedState,
   TablePaginationState,
   TableRowData,
+  TableRowOrderState,
   TableSortingState,
   PresenceContract,
 } from '@demo/ui-core'
@@ -143,6 +144,11 @@ export function HTable({
   columnOrder: columnOrderProp,
   defaultColumnOrder = [],
   onColumnOrderChange,
+  rowDraggable = false,
+  getRowId,
+  rowOrder: rowOrderProp,
+  defaultRowOrder = [],
+  onRowOrderChange,
   enableExpanding = false,
   lazyMount = true,
   unmountOnExit = false,
@@ -173,8 +179,12 @@ export function HTable({
   const [columnSizing, setColumnSizing] = useState<ColumnSizingState>(defaultColumnSizing)
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(defaultColumnOrder)
   const [draggedColumnId, setDraggedColumnId] = useState<string | null>(null)
+  const [rowOrder, setRowOrder] = useState<TableRowOrderState>(defaultRowOrder)
+  const [draggedRowId, setDraggedRowId] = useState<string | null>(null)
+  const [draggedRow, setDraggedRow] = useState<Row<TableRowData> | null>(null)
   const tableRootRef = useRef<HTMLDivElement>(null)
   const draggedColumnIdRef = useRef<string | null>(null)
+  const dragModeRef = useRef<'column' | 'row' | null>(null)
   const dragOverColumnIdRef = useRef<string | null>(null)
   const dragDeltaXRef = useRef(0)
   const dragFrameRef = useRef<number | null>(null)
@@ -229,6 +239,9 @@ export function HTable({
     if (columnOrderProp !== undefined) setColumnOrder(columnOrderProp)
   }, [columnOrderProp])
   useEffect(() => {
+    if (rowOrderProp !== undefined) setRowOrder(rowOrderProp)
+  }, [rowOrderProp])
+  useEffect(() => {
     if (paginationProp === undefined) {
       setPagination(prev => (prev.pageSize === pageSize ? prev : { ...prev, pageSize }))
     }
@@ -242,6 +255,32 @@ export function HTable({
   useEffect(() => {
     setColumnPinning(defaultColumnPinning)
   }, [defaultColumnPinning])
+
+  /** Reorder the raw data to match the (controlled or internal) row order. */
+  const displayData = useMemo<TableRowData[]>(() => {
+    if (!rowDraggable) return data
+    const order = rowOrderProp ?? rowOrder
+    if (!order?.length) return data
+    const idOf = (row: TableRowData, i: number) => (getRowId ? getRowId(row, i) : String(i))
+    const byId = new Map<string, { row: TableRowData; i: number }>()
+    data.forEach((row, i) => {
+      const id = idOf(row, i)
+      if (!byId.has(id)) byId.set(id, { row, i })
+    })
+    const sorted: TableRowData[] = []
+    const used = new Set<number>()
+    for (const id of order) {
+      const entry = byId.get(id)
+      if (entry && !used.has(entry.i)) {
+        sorted.push(entry.row)
+        used.add(entry.i)
+      }
+    }
+    data.forEach((row, i) => {
+      if (!used.has(i)) sorted.push(row)
+    })
+    return sorted
+  }, [data, rowDraggable, rowOrder, rowOrderProp, getRowId])
 
   const dataColumns = useMemo<ColumnDef<TableRowData>[]>(() => {
     if (columnDefs?.length) {
@@ -284,36 +323,55 @@ export function HTable({
   }, [columnContracts, columnDefs])
 
   const columns = useMemo<ColumnDef<TableRowData>[]>(() => {
-    if (!shouldExpand) return dataColumns
-    const expander: ColumnDef<TableRowData> = {
-      id: '__expand',
+    const dragHandle: ColumnDef<TableRowData> = {
+      id: '__drag',
       header: () => null,
-      size: 48,
-      minSize: 48,
+      size: 40,
+      minSize: 40,
       enableSorting: false,
       enableResizing: false,
       meta: { align: 'center' },
-      cell: ({ row }) => {
-        if (!row.getCanExpand()) return null
-        return (
-          <button
-            type="button"
-            className="ui-table__expand-trigger"
-            aria-label={row.getIsExpanded() ? 'Collapse row' : 'Expand row'}
-            aria-expanded={row.getIsExpanded()}
-            onClick={row.getToggleExpandedHandler()}
-          >
-            {row.getIsExpanded() ? '▾' : '▸'}
-          </button>
-        )
-      },
+      cell: () => null,
     }
-    return [expander, ...dataColumns]
-  }, [dataColumns, shouldExpand])
+    const expander: ColumnDef<TableRowData> | undefined = shouldExpand
+      ? {
+          id: '__expand',
+          header: () => null,
+          size: 48,
+          minSize: 48,
+          enableSorting: false,
+          enableResizing: false,
+          meta: { align: 'center' },
+          cell: ({ row }) => {
+            if (!row.getCanExpand()) return null
+            return (
+              <button
+                type="button"
+                className="ui-table__expand-trigger"
+                aria-label={row.getIsExpanded() ? 'Collapse row' : 'Expand row'}
+                aria-expanded={row.getIsExpanded()}
+                onClick={row.getToggleExpandedHandler()}
+              >
+                {row.getIsExpanded() ? '▾' : '▸'}
+              </button>
+            )
+          },
+        }
+      : undefined
+    return [
+      ...(rowDraggable ? [dragHandle] : []),
+      ...(expander ? [expander] : []),
+      ...dataColumns,
+    ]
+  }, [dataColumns, shouldExpand, rowDraggable])
 
   const table = useReactTable({
-    data,
+    data: displayData,
     columns,
+    getRowId: rowDraggable
+      ? (originalRow: TableRowData, index: number) =>
+          (getRowId ?? ((_row: TableRowData, i: number) => String(i)))(originalRow, index)
+      : undefined,
     state: {
       sorting,
       columnPinning,
@@ -384,7 +442,7 @@ export function HTable({
 
   function isOrderable(header: any) {
     const meta = header.column.columnDef.meta as { enableOrdering?: boolean } | undefined
-    return shouldDragColumns && header.column.id !== '__expand' && !header.column.getIsPinned() && meta?.enableOrdering !== false
+    return shouldDragColumns && header.column.id !== '__expand' && header.column.id !== '__drag' && !header.column.getIsPinned() && meta?.enableOrdering !== false
   }
 
   function moveColumn(sourceId: string, targetId: string) {
@@ -534,6 +592,71 @@ export function HTable({
     clearDragDelta()
   }
 
+  function handleRowDragStart({ active }: { active: { id: UniqueIdentifier } }) {
+    const id = String(active.id)
+    setDraggedRowId(id)
+    setDraggedRow(table.getRowModel().rows.find(row => row.id === id) ?? null)
+  }
+
+  function handleRowDragEnd({ active, over }: DragEndEvent) {
+    setDraggedRowId(null)
+    setDraggedRow(null)
+    if (!over || active.id === over.id) return
+
+    const current = rowOrderProp ?? rowOrder
+    let oldIndex = current.indexOf(String(active.id))
+    let newIndex = current.indexOf(String(over.id))
+
+    // First drag: rowOrder is still empty — derive the baseline from display order.
+    if (oldIndex < 0 || newIndex < 0) {
+      const ids = displayData.map((row, i) => (getRowId ? getRowId(row, i) : String(i)))
+      oldIndex = ids.indexOf(String(active.id))
+      newIndex = ids.indexOf(String(over.id))
+    }
+    if (oldIndex < 0 || newIndex < 0 || oldIndex === newIndex) return
+
+    const baseline: TableRowOrderState = current.length
+      ? current
+      : displayData.map((row, i) => (getRowId ? getRowId(row, i) : String(i)))
+    const next = arrayMove(baseline, oldIndex, newIndex)
+    setRowOrder(next)
+    onRowOrderChange?.({ rowOrder: next })
+  }
+
+  function handleRowDragCancel() {
+    setDraggedRowId(null)
+    setDraggedRow(null)
+  }
+
+  /** Route a shared DndContext event to the column or row drag handler. */
+  function handleDndDragStart(event: { active: { id: UniqueIdentifier } }) {
+    dragModeRef.current = String(event.active.id).startsWith('row:') ? 'row' : 'column'
+    if (dragModeRef.current === 'row') handleRowDragStart(event)
+    else handleDragStart(event)
+  }
+
+  function handleDndDragMove(event: DragMoveEvent) {
+    if (dragModeRef.current === 'row') return
+    handleDragMove(event)
+  }
+
+  function handleDndDragOver(event: DragOverEvent) {
+    if (dragModeRef.current === 'row') return
+    handleDragOver(event)
+  }
+
+  function handleDndDragEnd(event: DragEndEvent) {
+    if (dragModeRef.current === 'row') handleRowDragEnd(event)
+    else handleDragEnd(event)
+    dragModeRef.current = null
+  }
+
+  function handleDndDragCancel() {
+    if (dragModeRef.current === 'row') handleRowDragCancel()
+    else handleDragCancel()
+    dragModeRef.current = null
+  }
+
   function clearDragDelta() {
     if (dragFrameRef.current !== null) {
       window.cancelAnimationFrame(dragFrameRef.current)
@@ -552,11 +675,11 @@ export function HTable({
           sensors={sensors}
           collisionDetection={closestCenter}
           modifiers={[restrictColumnDragToViewport]}
-          onDragStart={handleDragStart}
-          onDragMove={handleDragMove}
-          onDragOver={handleDragOver}
-          onDragEnd={handleDragEnd}
-          onDragCancel={handleDragCancel}
+          onDragStart={handleDndDragStart}
+          onDragMove={handleDndDragMove}
+          onDragOver={handleDndDragOver}
+          onDragEnd={handleDndDragEnd}
+          onDragCancel={handleDndDragCancel}
         >
           <SortableContext
             items={table.getCenterLeafColumns()
@@ -630,7 +753,10 @@ export function HTable({
             ) : rows.length === 0 ? (
               <tr className="ui-table__tr"><td className="ui-table__td ui-table__td--empty" colSpan={colCount}>{emptyText}</td></tr>
             ) : (
-              <>
+              <SortableContext
+                items={rowDraggable ? rows.map(row => `row:${row.id}`) : []}
+                strategy={verticalListSortingStrategy}
+              >
                 {rows.map(row => (
                   <ReactRow
                     key={row.id}
@@ -641,6 +767,8 @@ export function HTable({
                     lazyMount={lazyMount}
                     unmountOnExit={unmountOnExit}
                     draggedColumnId={draggedColumnId}
+                    rowDraggable={rowDraggable}
+                    draggedRowId={draggedRowId}
                   />
                 ))}
                 {Array.from({ length: padCount }).map((_, index) => (
@@ -648,7 +776,7 @@ export function HTable({
                     {columns.map((_, colIndex) => <td key={colIndex} className="ui-table__td ui-table__td--pad" />)}
                   </tr>
                 ))}
-              </>
+              </SortableContext>
             )}
           </tbody>
             </table>
@@ -663,7 +791,17 @@ export function HTable({
                     </span>
                   </div>
                 )
-              })() : null}
+              })() : draggedRow ? (
+                <div className="ui-table__row-drag-overlay">
+                  {draggedRow.getVisibleCells()
+                    .filter(cell => cell.column.id !== '__drag')
+                    .map(cell => (
+                      <span key={cell.id} className="ui-table__row-drag-overlay-cell" style={{ width: cell.column.getSize() }}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </span>
+                    ))}
+                </div>
+              ) : null}
             </DragOverlay>
           </SortableContext>
         </DndContext>
@@ -724,6 +862,8 @@ function ReactRow({
   lazyMount,
   unmountOnExit,
   draggedColumnId,
+  rowDraggable,
+  draggedRowId,
 }: {
   row: Row<TableRowData>
   columns: ColumnDef<TableRowData>[]
@@ -732,11 +872,45 @@ function ReactRow({
   lazyMount: boolean
   unmountOnExit: boolean
   draggedColumnId: string | null
+  rowDraggable: boolean
+  draggedRowId: string | null
 }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: `row:${row.id}`,
+    disabled: !rowDraggable,
+  })
+  // Transforms on <tr> are unreliable across browsers — apply the vertical
+  // drag offset to every cell so the dragged row moves as a unit.
+  const rowDragCellStyle = transform && rowDraggable && isDragging
+    ? { transform: CSS.Transform.toString(transform), transition, position: 'relative' as const, zIndex: 2 }
+    : undefined
   return (
     <>
-      <tr className="ui-table__tr">
+      <tr
+        ref={setNodeRef}
+        className={[
+          'ui-table__tr',
+          rowDraggable ? 'ui-table__tr--row-draggable' : '',
+          isDragging ? 'ui-table__tr--dragging' : '',
+        ].filter(Boolean).join(' ')}
+        data-row-id={row.id}
+      >
         {row.getVisibleCells().map(cell => {
+          if (cell.column.id === '__drag') {
+            return (
+              <td key={cell.id} className="ui-table__td ui-table__td--drag-handle" data-column-id="__drag" style={rowDragCellStyle}>
+                <span
+                  className="ui-table__row-drag-handle"
+                  {...attributes}
+                  {...listeners}
+                  aria-label="Drag row"
+                  style={{ cursor: rowDraggable ? 'grab' : 'default' }}
+                >
+                  ⠿
+                </span>
+              </td>
+            )
+          }
           const align = (cell.column.columnDef.meta as { align?: string } | undefined)?.align ?? 'left'
           const pin = pinnedProps(cell.column)
           const isDragged = cell.column.id === draggedColumnId
@@ -751,7 +925,7 @@ function ReactRow({
                 zIndex: 2,
               }
             : undefined
-          return <td key={cell.id} className={['ui-table__td', `ui-table__td--align-${align}`, pin.className].filter(Boolean).join(' ')} style={{ ...pin.style, ...pinnedBodyStyle(pin), ...moveStyle }} data-pinned={pin.dataPinned} data-pinned-edge={pin.dataPinnedEdge} data-column-id={cell.column.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+          return <td key={cell.id} className={['ui-table__td', `ui-table__td--align-${align}`, pin.className].filter(Boolean).join(' ')} style={{ ...pin.style, ...pinnedBodyStyle(pin), ...moveStyle, ...rowDragCellStyle }} data-pinned={pin.dataPinned} data-pinned-edge={pin.dataPinnedEdge} data-column-id={cell.column.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
         })}
       </tr>
       {renderExpanded && row.getCanExpand() ? (

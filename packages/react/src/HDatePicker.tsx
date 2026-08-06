@@ -14,8 +14,8 @@ export interface HDatePickerProps extends DatePickerContract {}
 
 function toDateValues(iso?: DatePickerValue) {
   if (iso === undefined) return undefined
-  if (!iso.length) return []
-  return parseDate(iso)
+  const list = (Array.isArray(iso) ? iso : [iso]).filter(Boolean)
+  return list.map(v => parseDate(v))
 }
 
 function toIsoList(value: Array<{ toString(): string } | string> | undefined): string[] {

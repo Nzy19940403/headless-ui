@@ -1,4 +1,4 @@
-import type { ComponentCatalog } from './types'
+import type { CatalogPropDef, ComponentCatalog } from './types'
 
 /**
  * A2UI component catalog generated from core contracts.
@@ -13,7 +13,7 @@ import type { ComponentCatalog } from './types'
  *   2. `renderer.tsx`   — the A2UI adjacency list → H* component mapping
  */
 
-export const catalog: ComponentCatalog = [
+const baseCatalog: ComponentCatalog = [
   // ── Layout ────────────────────────────────────────────────────
   {
     name: 'Page',
@@ -30,10 +30,14 @@ export const catalog: ComponentCatalog = [
     name: 'Row',
     label: '横向布局',
     contract: 'LayoutContract',
-    description: '横向弹性布局容器。子组件等分可用宽度，可设 gap。',
+    description: '横向布局容器。默认 flex 等分；设 split 后变为侧栏布局（固定侧栏 + 弹性内容，侧栏自动撑满高度）。',
     props: [
       { name: 'gap', type: '"xs" | "sm" | "md" | "lg" | "xl"', required: false, description: '子项间距，默认 sm' },
       { name: 'align', type: '"start" | "center" | "end" | "stretch"', required: false, description: '垂直对齐方式' },
+      { name: 'split', type: '"left" | "right"', required: false, description: '设为侧栏布局：第一个（left）或第二个（right）子项作为固定宽度侧栏' },
+      { name: 'sidebarWidth', type: 'number', required: false, description: 'split 模式侧栏宽度 (px)，默认 190' },
+      { name: 'collapsedWidth', type: 'number', required: false, description: 'split 模式侧栏折叠（☰）时宽度 (px)，默认 64' },
+      { name: 'className', type: 'string', required: false, description: '自定义类名，用于页面级样式标记（如 "a2ui-filters" 筛选行、"a2ui-pagination" 分页行）' },
     ],
     example: { component: 'Row', id: 'row1', gap: 'md', children: ['col1', 'col2'] },
   },
@@ -41,7 +45,7 @@ export const catalog: ComponentCatalog = [
     name: 'Col',
     label: '列',
     contract: 'LayoutContract',
-    description: 'Row 的列子项。span 控制宽度比例（类似 12 列栅格）。',
+    description: 'Row 的列子项。span 控制宽度比例（类似 12 列栅格）。宽度由父布局决定：普通 Row 按 span 弹性，split Row 由 HSplit 的侧栏宽度控制。',
     props: [
       { name: 'span', type: 'number', required: false, description: '宽度比例，默认 1（均分）' },
     ],
@@ -57,6 +61,40 @@ export const catalog: ComponentCatalog = [
       { name: 'align', type: '"start" | "center" | "end" | "stretch"', required: false, description: '水平对齐方式' },
     ],
     example: { component: 'VStack', id: 'vstack1', gap: 'md', children: ['card1', 'card2'] },
+  },
+  {
+    name: 'Header',
+    label: '顶栏',
+    contract: 'LayoutContract',
+    description: '页面顶部导航栏 —— 品牌标识、主导航项、用户区。通常放在 Page 的第一个子组件。',
+    props: [
+      { name: 'brand', type: 'string', required: false, description: '品牌名称' },
+      { name: 'logo', type: 'string', required: false, description: '品牌 logo 图片 URL' },
+      { name: 'navItems', type: '{key:string,label:string}[]', required: false, description: '主导航项（key + 显示文字）' },
+      { name: 'navActive', type: 'string', required: false, description: '当前激活的导航项 key' },
+      { name: 'project', type: 'string', required: false, description: '项目选择区文字（如 "蒙兴煤矿"）' },
+      { name: 'welcome', type: 'string', required: false, description: '欢迎语' },
+      { name: 'mark', type: 'string', required: false, description: '头像标记文字' },
+    ],
+    example: {
+      component: 'Header', id: 'header1',
+      brand: '数字矿山', logo: '/production-assets/icon.png',
+      navItems: [{ key: 'live', label: '实时动态' }, { key: 'ops', label: '生产运营' }],
+      navActive: 'ops', project: '蒙兴煤矿', welcome: '欢迎用户·曹冬燕', mark: 'A☆',
+    },
+  },
+  {
+    name: 'Image',
+    label: '图片',
+    contract: 'shared',
+    description: '内联图片，常用于品牌 logo 或图标。',
+    props: [
+      { name: 'src', type: 'string', required: true, description: '图片 URL' },
+      { name: 'alt', type: 'string', required: false, description: '替代文字' },
+      { name: 'width', type: 'number', required: false, description: '宽度 (px)' },
+      { name: 'height', type: 'number', required: false, description: '高度 (px)' },
+    ],
+    example: { component: 'Image', id: 'img1', src: '/production-assets/icon.png', alt: 'logo', width: 32, height: 32 },
   },
 
   // ── Data display ───────────────────────────────────────────────
@@ -279,6 +317,10 @@ export const catalog: ComponentCatalog = [
       { name: 'pageSize', type: 'number', required: false, description: '每页行数，默认 10' },
       { name: 'density', type: '"compact" | "comfortable"', required: false, description: '密度' },
       { name: 'caption', type: 'string', required: false, description: '表格标题' },
+      { name: 'rowDraggable', type: 'boolean', required: false, description: '启用拖拽行排序，默认 false' },
+      { name: 'rowOrder', type: 'string[]', required: false, description: '受控行顺序（行 id 数组，按显示顺序）' },
+      { name: 'defaultRowOrder', type: 'string[]', required: false, description: '非受控模式的初始行顺序' },
+      { name: 'onRowOrderChange', type: '{rowOrder:string[]} => void', required: false, description: '行顺序变化回调' },
     ],
     example: {
       component: 'Table', id: 'table1',
@@ -368,6 +410,277 @@ export const catalog: ComponentCatalog = [
     example: { component: 'NavMenu', id: 'nav1', items: [{ value: 'home', label: '首页' }, { value: 'settings', label: '设置', children: [{ value: 'profile', label: '个人信息' }] }] },
   },
 ]
+
+/**
+ * Props that are already supported by the core/react contracts but were not
+ * part of the original hand-written A2UI catalog. Keep this layer separate
+ * so the catalog examples and descriptions remain readable while capability
+ * coverage can be audited in one place.
+ */
+const CONTRACT_PROP_SUPPLEMENTS: Record<string, CatalogPropDef[]> = {
+  Card: [
+    { name: 'description', type: 'string', required: false, description: 'Secondary card description.' },
+    { name: 'variant', type: '"surface" | "outline" | "ghost"', required: false, description: 'Card visual variant.' },
+  ],
+  Badge: [
+    { name: 'dot', type: 'boolean', required: false, description: 'Show the status dot.' },
+  ],
+  Tag: [
+    { name: 'size', type: '"sm" | "md" | "lg"', required: false, description: 'Tag size.' },
+  ],
+  Progress: [
+    { name: 'min', type: 'number', required: false, description: 'Minimum progress value.' },
+    { name: 'max', type: 'number', required: false, description: 'Maximum progress value.' },
+    { name: 'label', type: 'string', required: false, description: 'Progress label.' },
+    { name: 'indeterminate', type: 'boolean', required: false, description: 'Show indeterminate progress.' },
+  ],
+  Separator: [
+    { name: 'orientation', type: '"horizontal" | "vertical"', required: false, description: 'Separator orientation.' },
+  ],
+  Input: [
+    { name: 'error', type: 'string', required: false, description: 'Validation error message.' },
+    { name: 'helperText', type: 'string', required: false, description: 'Helper text below the input.' },
+    { name: 'size', type: '"sm" | "md" | "lg"', required: false, description: 'Input size.' },
+    { name: 'name', type: 'string', required: false, description: 'Form field name.' },
+  ],
+  NumberInput: [
+    { name: 'defaultValue', type: 'string | number', required: false, description: 'Initial numeric value.' },
+    { name: 'readOnly', type: 'boolean', required: false, description: 'Make the field read-only.' },
+    { name: 'name', type: 'string', required: false, description: 'Form field name.' },
+    { name: 'error', type: 'string', required: false, description: 'Validation error message.' },
+    { name: 'helperText', type: 'string', required: false, description: 'Helper text below the input.' },
+    { name: 'formatOptions', type: 'object', required: false, description: 'Number formatting options.' },
+    { name: 'allowMouseWheel', type: 'boolean', required: false, description: 'Allow mouse-wheel changes.' },
+    { name: 'scrubber', type: 'boolean', required: false, description: 'Show the drag scrubber.' },
+  ],
+  Textarea: [
+    { name: 'value', type: 'string', required: false, description: 'Controlled value.' },
+    { name: 'defaultValue', type: 'string', required: false, description: 'Initial value.' },
+    { name: 'readOnly', type: 'boolean', required: false, description: 'Make the field read-only.' },
+    { name: 'error', type: 'string', required: false, description: 'Validation error message.' },
+    { name: 'helperText', type: 'string', required: false, description: 'Helper text below the textarea.' },
+    { name: 'name', type: 'string', required: false, description: 'Form field name.' },
+    { name: 'size', type: '"sm" | "md" | "lg"', required: false, description: 'Textarea size.' },
+  ],
+  Select: [
+    { name: 'defaultValue', type: 'string | number', required: false, description: 'Initial selected value.' },
+    { name: 'name', type: 'string', required: false, description: 'Form field name.' },
+    { name: 'error', type: 'string', required: false, description: 'Validation error message.' },
+    { name: 'helperText', type: 'string', required: false, description: 'Helper text below the select.' },
+  ],
+  Checkbox: [
+    { name: 'defaultChecked', type: 'boolean', required: false, description: 'Initial checked state.' },
+    { name: 'error', type: 'string', required: false, description: 'Validation error message.' },
+    { name: 'helperText', type: 'string', required: false, description: 'Helper text below the checkbox.' },
+  ],
+  Toggle: [
+    { name: 'defaultChecked', type: 'boolean', required: false, description: 'Initial checked state.' },
+    { name: 'error', type: 'string', required: false, description: 'Validation error message.' },
+    { name: 'helperText', type: 'string', required: false, description: 'Helper text below the toggle.' },
+  ],
+  DatePicker: [
+    { name: 'id', type: 'string', required: false, description: 'Input id.' },
+    { name: 'name', type: 'string', required: false, description: 'Form field name.' },
+    { name: 'placeholder', type: 'string', required: false, description: 'Placeholder text.' },
+    { name: 'defaultValue', type: 'string[]', required: false, description: 'Initial date value.' },
+    { name: 'open', type: 'boolean', required: false, description: 'Controlled open state.' },
+    { name: 'defaultOpen', type: 'boolean', required: false, description: 'Initial open state.' },
+    { name: 'readOnly', type: 'boolean', required: false, description: 'Make the picker read-only.' },
+    { name: 'invalid', type: 'boolean', required: false, description: 'Show invalid state.' },
+    { name: 'min', type: 'string', required: false, description: 'Minimum ISO date.' },
+    { name: 'max', type: 'string', required: false, description: 'Maximum ISO date.' },
+    { name: 'locale', type: 'string', required: false, description: 'Locale.' },
+    { name: 'timeZone', type: 'string', required: false, description: 'Time zone.' },
+    { name: 'selectionMode', type: '"single" | "multiple" | "range"', required: false, description: 'Date selection mode.' },
+    { name: 'maxSelectedDates', type: 'number', required: false, description: 'Maximum selected dates.' },
+    { name: 'view', type: '"day" | "month" | "year"', required: false, description: 'Visible calendar view.' },
+    { name: 'defaultView', type: '"day" | "month" | "year"', required: false, description: 'Initial calendar view.' },
+    { name: 'minView', type: '"day" | "month" | "year"', required: false, description: 'Minimum calendar view.' },
+    { name: 'maxView', type: '"day" | "month" | "year"', required: false, description: 'Maximum calendar view.' },
+    { name: 'numOfMonths', type: 'number', required: false, description: 'Number of visible months.' },
+    { name: 'startOfWeek', type: 'number', required: false, description: 'First day of week, 0-6.' },
+    { name: 'fixedWeeks', type: 'boolean', required: false, description: 'Use fixed week rows.' },
+    { name: 'showWeekNumbers', type: 'boolean', required: false, description: 'Show week numbers.' },
+    { name: 'outsideDaySelectable', type: 'boolean', required: false, description: 'Allow selecting outside days.' },
+    { name: 'closeOnSelect', type: 'boolean', required: false, description: 'Close after selecting.' },
+    { name: 'openOnClick', type: 'boolean', required: false, description: 'Open on input click.' },
+    { name: 'inline', type: 'boolean', required: false, description: 'Render inline instead of popover.' },
+    { name: 'positioning', type: '"top" | "bottom" | "left" | "right"', required: false, description: 'Popover placement.' },
+  ],
+  Tabs: [
+    { name: 'value', type: 'string', required: false, description: 'Controlled active tab.' },
+    { name: 'defaultValue', type: 'string', required: false, description: 'Initial active tab.' },
+  ],
+  Dialog: [
+    { name: 'defaultOpen', type: 'boolean', required: false, description: 'Initial open state.' },
+    { name: 'lazyMount', type: 'boolean', required: false, description: 'Mount content lazily.' },
+    { name: 'unmountOnExit', type: 'boolean', required: false, description: 'Unmount content when closed.' },
+    { name: 'skipAnimationOnMount', type: 'boolean', required: false, description: 'Skip initial animation.' },
+  ],
+  NavMenu: [
+    { name: 'mode', type: '"vertical" | "horizontal" | "inline"', required: false, description: 'Menu layout mode.' },
+    { name: 'theme', type: '"light" | "dark"', required: false, description: 'Menu theme.' },
+    { name: 'selectable', type: 'boolean', required: false, description: 'Allow selection.' },
+    { name: 'multiple', type: 'boolean', required: false, description: 'Allow multiple selection.' },
+    { name: 'inlineCollapsed', type: 'boolean', required: false, description: 'Collapse inline menu.' },
+    { name: 'inlineIndent', type: 'number', required: false, description: 'Nested indentation.' },
+    { name: 'defaultSelectedKeys', type: 'string[]', required: false, description: 'Initial selected keys.' },
+    { name: 'openKeys', type: 'string[]', required: false, description: 'Controlled open keys.' },
+    { name: 'defaultOpenKeys', type: 'string[]', required: false, description: 'Initial open keys.' },
+    { name: 'triggerSubMenuAction', type: '"hover" | "click"', required: false, description: 'Submenu trigger.' },
+  ],
+  Chart: [
+    { name: 'loading', type: 'boolean', required: false, description: 'Show loading state.' },
+    { name: 'emptyText', type: 'string', required: false, description: 'Empty chart text.' },
+  ],
+  Table: [
+    { name: 'fillHeight', type: 'boolean', required: false, description: 'Fill available block size.' },
+    { name: 'sorting', type: '{id:string, desc:boolean}[]', required: false, description: 'Controlled sorting state.' },
+    { name: 'defaultSorting', type: '{id:string, desc:boolean}[]', required: false, description: 'Initial sorting state.' },
+    { name: 'pagination', type: '{pageIndex:number, pageSize:number}', required: false, description: 'Controlled pagination state.' },
+    { name: 'defaultPagination', type: '{pageIndex:number, pageSize:number}', required: false, description: 'Initial pagination state.' },
+    { name: 'resizeable', type: 'boolean', required: false, description: 'Enable column resizing.' },
+    { name: 'enableColumnResizing', type: 'boolean', required: false, description: 'Compatibility alias for column resizing.' },
+    { name: 'columnResizeMode', type: '"onChange" | "onEnd"', required: false, description: 'When resizing state updates.' },
+    { name: 'columnSizing', type: 'Record<string, number>', required: false, description: 'Controlled column widths.' },
+    { name: 'defaultColumnSizing', type: 'Record<string, number>', required: false, description: 'Initial column widths.' },
+    { name: 'draggable', type: 'boolean', required: false, description: 'Enable header drag-and-drop column ordering.' },
+    { name: 'enableColumnOrdering', type: 'boolean', required: false, description: 'Compatibility alias for column ordering.' },
+    { name: 'columnOrder', type: 'string[]', required: false, description: 'Controlled column order.' },
+    { name: 'defaultColumnOrder', type: 'string[]', required: false, description: 'Initial column order.' },
+    { name: 'enableExpanding', type: 'boolean', required: false, description: 'Enable expandable rows.' },
+    { name: 'expanded', type: 'boolean | Record<string, boolean>', required: false, description: 'Controlled expanded rows.' },
+    { name: 'defaultExpanded', type: 'boolean | Record<string, boolean>', required: false, description: 'Initial expanded rows.' },
+    { name: 'detailFields', type: '{key:string,label:string}[]', required: false, description: 'When enableExpanding is on, fields shown in each row’s expanded detail grid (key = column accessorKey).' },
+    { name: 'padEmptyRows', type: 'boolean', required: false, description: 'Pad paginated tables to stable height.' },
+    { name: 'externalPagination', type: 'boolean', required: false, description: 'Set true when a custom pagination row is provided as the table’s children — suppresses HTable’s built-in pagination.' },
+    { name: 'textAlign', type: '"left" | "center" | "right"', required: false, description: 'Default cell text alignment.' },
+    { name: 'emptyText', type: 'string', required: false, description: 'Empty table text.' },
+    { name: 'loading', type: 'boolean', required: false, description: 'Show table loading state.' },
+  ],
+}
+
+const prop = (name: string, type: string, required = false): CatalogPropDef => ({
+  name,
+  type,
+  required,
+  description: `Supported ${name} capability.`,
+})
+
+/** Components already exported by @demo/ui-react but not in the original catalog. */
+const additionalCatalog: ComponentCatalog = [
+  {
+    name: 'Accordion', label: 'Accordion', contract: 'AccordionContract',
+    description: 'Disclosure sections with one or multiple expanded items.',
+    props: [prop('items', '{value:string,label:string,content:string}[]', true), prop('multiple', 'boolean'), prop('defaultValue', 'string[]'), prop('value', 'string[]')],
+    example: { component: 'Accordion', id: 'faq', items: [{ value: 'q1', label: 'Question', content: 'Answer' }] },
+  },
+  {
+    name: 'Avatar', label: 'Avatar', contract: 'AvatarContract',
+    description: 'User or entity avatar with fallback text.',
+    props: [prop('src', 'string'), prop('alt', 'string'), prop('fallback', 'string'), prop('size', '"sm" | "md" | "lg"')],
+    example: { component: 'Avatar', id: 'avatar', src: '/avatar.png', fallback: 'JD' },
+  },
+  {
+    name: 'Combobox', label: 'Combobox', contract: 'ComboboxContract',
+    description: 'Searchable single-value selection control.',
+    props: [prop('items', '{value:string|number,label:string,disabled?:boolean}[]', true), prop('value', 'string | number'), prop('defaultValue', 'string | number'), prop('placeholder', 'string'), prop('disabled', 'boolean'), prop('name', 'string'), prop('label', 'string')],
+    example: { component: 'Combobox', id: 'team', label: 'Team', items: [{ value: 'eng', label: 'Engineering' }] },
+  },
+  {
+    name: 'Drawer', label: 'Drawer', contract: 'DrawerContract',
+    description: 'Side panel overlay with configurable placement and size.',
+    props: [prop('trigger', 'string'), prop('title', 'string', true), prop('description', 'string'), prop('open', 'boolean'), prop('defaultOpen', 'boolean'), prop('floatingTrigger', 'boolean'), prop('placement', '"left" | "right" | "top" | "bottom"'), prop('size', 'string'), prop('lazyMount', 'boolean'), prop('unmountOnExit', 'boolean')],
+    example: { component: 'Drawer', id: 'filters', title: 'Filters', placement: 'right', children: ['filter-content'] },
+  },
+  {
+    name: 'Empty', label: 'Empty', contract: 'EmptyContract',
+    description: 'Empty-state content block.',
+    props: [prop('title', 'string'), prop('description', 'string')],
+    example: { component: 'Empty', id: 'empty', title: 'No results', description: 'Try another search.' },
+  },
+  {
+    name: 'PasswordInput', label: 'Password input', contract: 'PasswordInputContract',
+    description: 'Password field with visibility control.',
+    props: [prop('label', 'string'), prop('value', 'string'), prop('defaultValue', 'string'), prop('placeholder', 'string'), prop('disabled', 'boolean'), prop('readOnly', 'boolean'), prop('required', 'boolean'), prop('name', 'string'), prop('error', 'string'), prop('helperText', 'string'), prop('autoComplete', '"current-password" | "new-password"')],
+    example: { component: 'PasswordInput', id: 'password', label: 'Password', required: true },
+  },
+  {
+    name: 'RadioGroup', label: 'Radio group', contract: 'RadioGroupContract',
+    description: 'Single-choice option group.',
+    props: [prop('items', '{value:string,label:string,disabled?:boolean}[]', true), prop('value', 'string'), prop('defaultValue', 'string'), prop('disabled', 'boolean'), prop('name', 'string'), prop('label', 'string')],
+    example: { component: 'RadioGroup', id: 'plan', label: 'Plan', items: [{ value: 'free', label: 'Free' }] },
+  },
+  {
+    name: 'SegmentGroup', label: 'Segment group', contract: 'SegmentGroupContract',
+    description: 'Inline segmented single-choice control.',
+    props: [prop('items', '{value:string,label:string,disabled?:boolean}[]', true), prop('value', 'string'), prop('defaultValue', 'string'), prop('disabled', 'boolean'), prop('name', 'string'), prop('label', 'string'), prop('fullWidth', 'boolean'), prop('size', '"sm" | "md" | "lg"')],
+    example: { component: 'SegmentGroup', id: 'view', items: [{ value: 'grid', label: 'Grid' }, { value: 'list', label: 'List' }] },
+  },
+  {
+    name: 'Skeleton', label: 'Skeleton', contract: 'SkeletonContract',
+    description: 'Loading placeholder block.',
+    props: [prop('width', 'string'), prop('height', 'string'), prop('circle', 'boolean'), prop('animated', 'boolean')],
+    example: { component: 'Skeleton', id: 'loading-card', width: '100%', height: '120px' },
+  },
+  {
+    name: 'Slider', label: 'Slider', contract: 'SliderContract',
+    description: 'Numeric range input.',
+    props: [prop('label', 'string'), prop('value', 'number'), prop('defaultValue', 'number'), prop('min', 'number'), prop('max', 'number'), prop('step', 'number'), prop('disabled', 'boolean'), prop('name', 'string')],
+    example: { component: 'Slider', id: 'volume', label: 'Volume', min: 0, max: 100, value: 50 },
+  },
+  {
+    name: 'Tooltip', label: 'Tooltip', contract: 'TooltipContract',
+    description: 'Hover or focus tooltip around child content.',
+    props: [prop('content', 'string', true), prop('open', 'boolean'), prop('defaultOpen', 'boolean'), prop('disabled', 'boolean'), prop('positioning', '"top" | "bottom" | "left" | "right"')],
+    example: { component: 'Tooltip', id: 'help', content: 'More information', children: ['help-button'] },
+  },
+  {
+    name: 'Tree', label: 'Tree', contract: 'TreeContract',
+    description: 'Hierarchical tree with selection and expansion.',
+    props: [prop('nodes', '{id:string,label:string,children?:object[],disabled?:boolean}[]', true), prop('label', 'string'), prop('selectionMode', '"single" | "multiple"'), prop('expandedValue', 'string[]'), prop('defaultExpandedValue', 'string[]'), prop('selectedValue', 'string[]'), prop('defaultSelectedValue', 'string[]'), prop('virtual', 'boolean'), prop('height', 'number | string'), prop('rowHeight', 'number'), prop('overscan', 'number'), prop('expandOnClick', 'boolean')],
+    example: { component: 'Tree', id: 'file-tree', nodes: [{ id: 'src', label: 'src', children: [] }] },
+  },
+  {
+    name: 'TreeSelect', label: 'Tree select', contract: 'TreeSelectContract',
+    description: 'Hierarchical selection control.',
+    props: [prop('nodes', '{id:string,label:string,children?:object[],disabled?:boolean}[]', true), prop('value', 'string | string[]'), prop('defaultValue', 'string | string[]'), prop('placeholder', 'string'), prop('disabled', 'boolean'), prop('name', 'string'), prop('label', 'string'), prop('selectBranches', 'boolean'), prop('multiple', 'boolean'), prop('height', 'number | string'), prop('columnWidth', 'number | string'), prop('columnWidths', '(number | string)[]'), prop('virtual', 'boolean'), prop('defaultExpandedValue', 'string[]'), prop('expandedValue', 'string[]')],
+    example: { component: 'TreeSelect', id: 'department', label: 'Department', nodes: [] },
+  },
+  {
+    name: 'Container', label: 'Container', contract: 'ContainerContract',
+    description: 'Centered content container.',
+    props: [prop('size', 'string'), prop('padded', 'boolean'), prop('center', 'boolean')],
+    example: { component: 'Container', id: 'container', size: 'xl', children: ['content'] },
+  },
+  {
+    name: 'Grid', label: 'Grid', contract: 'GridContract',
+    description: 'Responsive grid layout.',
+    props: [prop('columns', 'number | string'), prop('minChildWidth', 'string'), prop('gap', 'string'), prop('rowGap', 'string'), prop('columnGap', 'string'), prop('equalHeight', 'boolean')],
+    example: { component: 'Grid', id: 'grid', columns: 3, gap: 'md', children: ['card1', 'card2'] },
+  },
+  {
+    name: 'Split', label: 'Split layout', contract: 'SplitContract',
+    description: 'Two-pane split layout.',
+    props: [prop('ratio', 'string'), prop('gap', 'string'), prop('collapseBelow', 'string'), prop('sidebarWidth', 'string'), prop('align', 'string')],
+    example: { component: 'Split', id: 'split', ratio: '1:2', children: ['sidebar', 'main'] },
+  },
+  {
+    name: 'Spacer', label: 'Spacer', contract: 'SpacerContract',
+    description: 'Flexible layout spacer.',
+    props: [prop('size', 'string'), prop('grow', 'boolean')],
+    example: { component: 'Spacer', id: 'spacer', grow: true },
+  },
+]
+
+export const catalog: ComponentCatalog = baseCatalog.map(entry => {
+  const supplements = CONTRACT_PROP_SUPPLEMENTS[entry.name] ?? []
+  const existing = new Set(entry.props.map(prop => prop.name))
+  return {
+    ...entry,
+    props: [...entry.props, ...supplements.filter(prop => !existing.has(prop.name))],
+  }
+}).concat(additionalCatalog)
 
 /** Look up a catalog entry by component name. */
 export function getCatalogEntry(name: string) {

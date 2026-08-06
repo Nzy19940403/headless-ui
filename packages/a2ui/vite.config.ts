@@ -5,8 +5,11 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   root: '.',
+  // Reuse the playground's production-assets (header.png, icon.png, machine icons)
+  // so the replica skin can reference them via /production-assets/*.
+  publicDir: resolve(__dirname, '../../playground/public'),
   server: {
-    port: 5200,
+    port: process.env.PORT ? Number(process.env.PORT) : 5200,
   },
   resolve: {
     alias: {

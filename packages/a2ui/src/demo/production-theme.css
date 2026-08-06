@@ -1,0 +1,563 @@
+/* Reuse the production replica skin inside the A2UI preview surface. */
+@import '../../../../playground/src/page-styles/production-operations.css';
+
+.a2ui-production-preview {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  box-sizing: border-box;
+  background: #020a1e !important;
+  color: #dbe8ff;
+  font-family: 'Microsoft YaHei', 'PingFang SC', Inter, sans-serif;
+}
+
+.a2ui-production-preview .a2ui-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 100%;
+  min-height: 0;
+  padding: 0 !important;
+  color: #dbe8ff;
+}
+
+.a2ui-production-preview .a2ui-page__title {
+  margin: 0 0 4px !important;
+  color: #e8f3ff;
+  font-size: 20px !important;
+  font-weight: 600 !important;
+}
+
+.a2ui-production-preview .a2ui-page__subtitle {
+  margin: 0 0 16px !important;
+  color: #8fa9cc !important;
+  font-size: 12px !important;
+}
+
+.a2ui-production-preview .a2ui-page__body {
+  gap: 14px !important;
+  /* Page-shell height chain: body fills the page so the split row reaches the
+     bottom. (HSplit + fill-height VStack grow themselves via components.css.) */
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.a2ui-production-preview .ui-card {
+  overflow: hidden;
+  border: 1px solid rgba(43, 113, 188, 0.35);
+  border-radius: 4px;
+  background: #06142f;
+  color: #dbe8ff;
+  box-shadow: 0 1px 0 rgba(45, 125, 221, 0.18) inset;
+}
+
+.a2ui-production-preview .ui-card__header {
+  padding: 11px 14px;
+  border-bottom: 1px solid rgba(86, 155, 235, 0.22);
+  background: #0b1630;
+}
+
+.a2ui-production-preview .ui-card__title {
+  color: #dbe8ff;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.a2ui-production-preview .ui-card__description {
+  color: #8fa9cc;
+  font-size: 12px;
+}
+
+.a2ui-production-preview .ui-card > :not(.ui-card__header) {
+  padding: 12px;
+}
+
+.a2ui-production-preview .ui-stack,
+.a2ui-production-preview .ui-v-stack {
+  color: #dbe8ff;
+}
+
+.a2ui-production-preview .ui-field__label,
+.a2ui-production-preview .ui-select__label {
+  color: #8fa9cc;
+}
+
+.a2ui-production-preview .ui-table__pagination {
+  display: flex;
+  color: #bcd0eb;
+}
+
+.a2ui-production-preview .ui-table__empty {
+  color: #8fa9cc;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────── */
+
+.a2ui-production-preview .ui-button {
+  border-radius: 3px;
+  color: #fff;
+  /* Real template: el-button--mini — 32px high, 14px font, no scale. */
+  height: 32px;
+  min-height: 32px;
+  padding: 0 15px;
+  font-size: 14px;
+  line-height: 32px;
+}
+
+.a2ui-production-preview .ui-button--sm {
+  height: 32px;
+  min-height: 32px;
+  padding: 0 12px;
+  font-size: 14px;
+  line-height: 32px;
+}
+
+.a2ui-production-preview .ui-button--primary {
+  background: #1890ff;
+  color: #fff;
+}
+
+.a2ui-production-preview .ui-button--primary:hover {
+  background: #39a7ff;
+}
+
+.a2ui-production-preview .ui-button--secondary {
+  background: #11192d;
+  border: 1px solid rgba(86, 155, 235, 0.38);
+  color: #c0c4cc;
+}
+
+.a2ui-production-preview .ui-button--secondary:hover {
+  background: #1b5b9e;
+  color: #fff;
+}
+
+.a2ui-production-preview .ui-button--ghost {
+  background: transparent;
+  color: #1196ff;
+}
+
+.a2ui-production-preview .ui-button--ghost:hover {
+  background: rgba(28, 123, 219, 0.18);
+  color: #6bc5ff;
+}
+
+/* ── Filter form ────────────────────────────────────────────────
+   The filters row is marked className="a2ui-filters" in the A2UI JSON.
+   Real template: fixed-width controls, 15px gaps, no stretch. */
+.a2ui-production-preview .a2ui-filters {
+  align-items: center;
+  gap: 15px;
+}
+
+.a2ui-production-preview .a2ui-filters > .ui-field,
+.a2ui-production-preview .a2ui-filters > .ui-select,
+.a2ui-production-preview .a2ui-filters > .ui-tree-select {
+  flex: 0 0 auto;
+  width: 140px;
+}
+
+.a2ui-production-preview .a2ui-filters > .ui-button {
+  flex: 0 0 auto;
+}
+
+/* ── Inputs / fields ─────────────────────────────────────────── */
+
+.a2ui-production-preview .ui-field__label,
+.a2ui-production-preview .ui-select__label {
+  color: #8fa9cc;
+}
+
+.a2ui-production-preview .ui-input,
+.a2ui-production-preview .ui-textarea,
+.a2ui-production-preview .ui-select__trigger,
+.a2ui-production-preview .ui-tree-select__trigger {
+  background: #030b21;
+  border-color: rgba(86, 155, 235, 0.38);
+  color: #dbe8ff;
+  /* Real template: el-input — 32px, 14px. */
+  height: 32px;
+  min-height: 32px;
+  padding: 0 15px;
+  font-size: 14px;
+  line-height: 32px;
+}
+
+.a2ui-production-preview .ui-field {
+  gap: 4px;
+}
+
+.a2ui-production-preview .ui-field__label {
+  font-size: 14px;
+}
+
+.a2ui-production-preview .ui-select__trigger [data-part='placeholder'] {
+  font-size: 14px;
+}
+
+.a2ui-production-preview .ui-input::placeholder,
+.a2ui-production-preview .ui-textarea::placeholder,
+.a2ui-production-preview .ui-select__trigger [data-part='placeholder'] {
+  color: #6d87ab;
+}
+
+.a2ui-production-preview .ui-input:focus,
+.a2ui-production-preview .ui-textarea:focus,
+.a2ui-production-preview .ui-select__trigger:focus-visible,
+.a2ui-production-preview .ui-select__trigger[data-state='open'] {
+  border-color: #168eff;
+  box-shadow: 0 0 0 1px rgba(22, 142, 255, 0.5);
+  outline: none;
+}
+
+/* ── Checkbox ────────────────────────────────────────────────── */
+
+.a2ui-production-preview [data-scope='checkbox'] [data-part='control'] {
+  border-color: rgba(86, 155, 235, 0.5);
+  background: #030b21;
+}
+
+.a2ui-production-preview [data-scope='checkbox'][data-state='checked'] [data-part='control'] {
+  background: #168eff;
+  border-color: #168eff;
+}
+
+/* ── Nav menu ────────────────────────────────────────────────── */
+
+/* Sidebar split: the nav menu stretches to fill the rail and paints the
+   replica sidebar background across the whole column height. */
+.a2ui-production-preview .ui-split > *:first-child {
+  background: #030d26;
+  border-right: 1px solid rgba(43, 113, 188, 0.35);
+}
+
+.a2ui-production-preview .ui-split > *:first-child .ui-nav-menu {
+  height: 100%;
+  min-height: 100%;
+  background: transparent;
+  color: #bfcee5;
+}
+
+.a2ui-production-preview .ui-nav-menu__item-trigger {
+  min-height: 40px;
+  gap: 12px;
+  padding-inline: 20px;
+  border-radius: 0;
+  color: #bfcee5;
+  font-size: 14px;
+}
+
+.a2ui-production-preview .ui-nav-menu__item-trigger:hover {
+  background: rgba(28, 123, 219, 0.18);
+  color: #fff;
+}
+
+.a2ui-production-preview .ui-nav-menu__item-trigger--selected {
+  background: #168ef0;
+  color: #fff;
+  box-shadow: 0 0 18px rgba(0, 136, 255, 0.13) inset;
+}
+
+.a2ui-production-preview .ui-nav-menu__submenu .ui-nav-menu__item-trigger {
+  padding-inline-start: calc(20px + var(--ui-nav-menu-depth, 0) * var(--ui-nav-menu-indent, 24px));
+}
+
+/* ── Tabs / dialog ───────────────────────────────────────────── */
+
+.a2ui-production-preview .ui-tabs__trigger[data-state='active'] {
+  color: #fff;
+  border-color: #168eff;
+}
+
+.a2ui-production-preview .ui-tabs__trigger:not([data-state='active']) {
+  color: #8fa9cc;
+}
+
+.a2ui-production-preview .ui-dialog__content,
+.a2ui-production-preview [data-scope='dialog'][data-part='content'] {
+  background: #06142f;
+  border: 1px solid rgba(43, 113, 188, 0.35);
+  color: #dbe8ff;
+}
+
+.a2ui-production-preview [data-scope='dialog'] [data-part='title'],
+.a2ui-production-preview [data-scope='dialog'] [data-part='description'] {
+  color: #dbe8ff;
+}
+
+/* ── Separator / divider ─────────────────────────────────────── */
+
+.a2ui-production-preview .ui-separator {
+  border-color: rgba(86, 155, 235, 0.22);
+}
+
+/* ── Header (page shell) ─────────────────────────────────────── */
+
+.a2ui-production-preview .a2ui-header {
+  display: flex;
+  min-height: 64px;
+  align-items: center;
+  gap: 22px;
+  padding: 0 22px 0 28px;
+  border-bottom: 1px solid rgba(86, 155, 235, 0.38);
+  background: #06142f url('/production-assets/header.png') center / 100% 100% no-repeat;
+  box-shadow: 0 1px 0 rgba(45, 125, 221, 0.22) inset;
+}
+
+.a2ui-production-preview .a2ui-header__brand {
+  display: flex;
+  min-width: 168px;
+  align-items: center;
+  gap: 12px;
+  color: #e8f3ff;
+  font-size: 18px;
+}
+
+.a2ui-production-preview .a2ui-header__logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.a2ui-production-preview .a2ui-header__menu-btn {
+  width: 26px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #91a8c8;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.a2ui-production-preview .a2ui-header__menu-btn:hover {
+  color: #dbe8ff;
+}
+
+.a2ui-production-preview .a2ui-header__nav {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  flex: 1;
+}
+
+.a2ui-production-preview .a2ui-header__nav-item {
+  cursor: pointer;
+  color: #bfcee5;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.a2ui-production-preview .a2ui-header__nav-item:hover {
+  color: #fff;
+}
+
+.a2ui-production-preview .a2ui-header__nav-item--active {
+  color: #fff;
+  font-weight: 600;
+}
+
+.a2ui-production-preview .a2ui-header__user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #bfcee5;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.a2ui-production-preview .a2ui-header__mark {
+  display: inline-flex;
+  width: 30px;
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #168ef0;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ── Table row/header heights — real template is 52px rows, 36px header ── */
+
+.a2ui-production-preview .ui-table__td {
+  height: 52px;
+  min-height: 52px;
+  max-height: 52px;
+}
+
+.a2ui-production-preview .ui-table__th {
+  height: 36px;
+  min-height: 36px;
+  max-height: 36px;
+}
+
+/* ── Table expandable detail grid ────────────────────────────── */
+
+.a2ui-production-preview .a2ui-table-detail__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px 20px;
+  padding: 10px 16px;
+}
+
+.a2ui-production-preview .a2ui-table-detail__label {
+  display: block;
+  margin-bottom: 4px;
+  color: #8fa9cc;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.a2ui-production-preview .a2ui-table-detail__value {
+  display: block;
+  color: #dbe8ff;
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+/* ── Page body keeps a page gutter while header is full-width ── */
+
+.a2ui-production-preview .a2ui-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.a2ui-production-preview .a2ui-page > .a2ui-header {
+  margin: -0px -0px 14px;
+}
+
+/* ── Left drawer (toolbox) ─────────────────────────────────────── */
+
+.a2ui-drawer-nav {
+  padding: 4px 0;
+}
+
+.a2ui-drawer-nav .ui-nav-menu {
+  width: 100%;
+  min-height: 100%;
+  background: transparent;
+  color: #bfcee5;
+}
+
+.a2ui-drawer-nav .ui-nav-menu__item-trigger {
+  min-height: 40px;
+  gap: 12px;
+  padding-inline: 20px;
+  border-radius: 0;
+  color: #bfcee5;
+  font-size: 14px;
+}
+
+.a2ui-drawer-nav .ui-nav-menu__item-trigger:hover {
+  background: rgba(28, 123, 219, 0.18);
+  color: #fff;
+}
+
+.a2ui-drawer-nav .ui-nav-menu__item-trigger--selected {
+  background: #168ef0;
+  color: #fff;
+  box-shadow: 0 0 18px rgba(0, 136, 255, 0.13) inset;
+}
+
+.a2ui-drawer-nav .ui-nav-menu__submenu .ui-nav-menu__item-trigger {
+  padding-inline-start: calc(20px + var(--ui-nav-menu-depth, 0) * var(--ui-nav-menu-indent, 24px));
+}
+
+.a2ui-drawer-divider {
+  height: 1px;
+  margin: 12px 0;
+  background: rgba(86, 155, 235, 0.22);
+}
+
+/* Drawer shell also gets the deep-blue skin (it portals outside .a2ui-production-preview). */
+.ui-drawer__content {
+  background: #06142f;
+  border: 1px solid rgba(43, 113, 188, 0.35);
+  color: #dbe8ff;
+}
+
+.ui-drawer__title {
+  color: #e8f3ff;
+}
+
+.ui-drawer__description {
+  color: #8fa9cc;
+}
+
+/* ── Table wrapper ──────────────────────────────────────────────
+   The renderer wraps table + custom pagination in .a2ui-table-wrap.
+   It's a grow child of the fill-height content stack; the table fills it. */
+.a2ui-production-preview .a2ui-table-wrap {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* ── Pagination row (real template: el-pagination) ─────────────── */
+
+/* The custom pagination row is marked className="a2ui-pagination".
+   Compact controls, centered vertically — like el-pagination. */
+.a2ui-production-preview .a2ui-pagination {
+  align-items: center;
+  flex-wrap: nowrap;
+  min-height: 32px;
+}
+
+.a2ui-production-preview .a2ui-pagination > .ui-select {
+  width: 100px;
+  height: 32px;
+  flex: 0 0 100px;
+  margin-right: 10px;
+}
+
+.a2ui-production-preview .a2ui-pagination > .ui-select .ui-select__trigger {
+  height: 28px;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 3px;
+  font-size: 13px;
+  line-height: 28px;
+}
+
+.a2ui-production-preview .a2ui-pagination > .ui-field {
+  width: 50px;
+  height: 32px;
+  margin: 0 3px;
+  flex: 0 0 50px;
+}
+
+.a2ui-production-preview .a2ui-pagination > .ui-field .ui-input {
+  width: 50px;
+  height: 28px;
+  min-height: 28px;
+  padding: 0 4px;
+  border-radius: 3px;
+  font-size: 13px;
+  line-height: 28px;
+  text-align: center;
+}
+
+/* Page buttons: 30×28 like el-pagination number/prev. */
+.a2ui-production-preview .a2ui-pagination > .ui-button {
+  width: 30px !important;
+  height: 28px !important;
+  min-height: 28px !important;
+  margin: 0 4px;
+  border-radius: 3px !important;
+  padding: 0 !important;
+  font-size: 13px !important;
+  line-height: 28px !important;
+  flex: 0 0 30px !important;
+}
+
+.a2ui-production-preview .a2ui-pagination > .ui-button--primary {
+  background: #3399ff;
+  color: #fff;
+}
+
+.a2ui-production-preview .a2ui-pagination > span {
+  color: #c0c4cc;
+  font-size: 13px;
+  white-space: nowrap;
+}

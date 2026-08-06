@@ -351,14 +351,16 @@ function genTSX(
       ctx.imports.add('HBadge')
       const tone = entries.find(([k]) => k === 'tone')?.[1] ?? "'neutral'"
       const text = entries.find(([k]) => k === 'text')?.[1] ?? "''"
-      return `${pad}<HBadge tone={${tone} as const}>{${text}}</HBadge>`
+      const dot = entries.find(([k]) => k === 'dot')?.[1]
+      return `${pad}<HBadge tone={${tone} as const}${dot ? ` dot={${dot}}` : ''}>{${text}}</HBadge>`
     }
 
     case 'Tag': {
       ctx.imports.add('HTag')
       const tone = entries.find(([k]) => k === 'tone')?.[1] ?? "'neutral'"
+      const size = entries.find(([k]) => k === 'size')?.[1] ?? "'md'"
       const content = entries.find(([k]) => k === 'content')?.[1] ?? "''"
-      return `${pad}<HTag tone={${tone} as const} content={${content}} />`
+      return `${pad}<HTag tone={${tone} as const} size={${size} as const} content={${content}} />`
     }
 
     case 'Progress': {
@@ -396,8 +398,9 @@ function genTSX(
     // ── Form inputs ─────────────────────────────────────────
     case 'Input': {
       ctx.imports.add('HInput')
-      const ps = buildPropString(entries)
-      return `${pad}<HInput size="md"${ps} />`
+      const size = entries.find(([k]) => k === 'size')?.[1] ?? "'md'"
+      const withoutSize = buildPropString(entries.filter(([k]) => k !== 'size'))
+      return `${pad}<HInput size={${size} as const}${withoutSize} />`
     }
 
     case 'NumberInput': {
@@ -467,7 +470,10 @@ function genTSX(
       const pageSize = entries.find(([k]) => k === 'pageSize')?.[1] ?? '10'
       const enableSorting = entries.find(([k]) => k === 'enableSorting')?.[1] !== 'false'
       const density = entries.find(([k]) => k === 'density')?.[1] ?? "'comfortable'"
-      return `${pad}<HTable\n${pad}${IND}columns={${columnsExpr} as { accessorKey: string; header: string; cellType?: string }[]}\n${pad}${IND}data={${dataSourceExpr} as Record<string, unknown>[]}${caption ? `\n${pad}${IND}caption={${caption}}` : ''}\n${pad}${IND}enablePagination={${enablePagination}}\n${pad}${IND}pageSize={${pageSize}}\n${pad}${IND}enableSorting={${enableSorting}}\n${pad}${IND}density={${density} as const}\n${pad}/>`
+      const extraProps = buildPropString(entries.filter(([k]) => ![
+        'columns', 'dataSource', 'caption', 'enablePagination', 'pageSize', 'enableSorting', 'density',
+      ].includes(k)))
+      return `${pad}<HTable\n${pad}${IND}columns={${columnsExpr} as { accessorKey: string; header: string; cellType?: string }[]}\n${pad}${IND}data={${dataSourceExpr} as Record<string, unknown>[]}${caption ? `\n${pad}${IND}caption={${caption}}` : ''}\n${pad}${IND}enablePagination={${enablePagination}}\n${pad}${IND}pageSize={${pageSize}}\n${pad}${IND}enableSorting={${enableSorting}}\n${pad}${IND}density={${density} as const}${extraProps}\n${pad}/>`
     }
 
     case 'Tabs': {
@@ -573,6 +579,10 @@ function genTSX(
       if (smooth) ps.push(`smooth={${smooth}}`)
       if (stack) ps.push(`stack={${stack}}`)
       if (unit) ps.push(`unit={${unit}}`)
+      const loading = entries.find(([k]) => k === 'loading')?.[1]
+      const emptyText = entries.find(([k]) => k === 'emptyText')?.[1]
+      if (loading) ps.push(`loading={${loading}}`)
+      if (emptyText) ps.push(`emptyText={${emptyText}}`)
       return `${pad}<HChart ${ps.join(' ')} />`
     }
     // ── Navigation ──────────────────────────────────────────
@@ -580,11 +590,12 @@ function genTSX(
       ctx.imports.add('HNavMenu')
       const itemsExpr = entries.find(([k]) => k === 'items')?.[1] ?? '[]'
       const selectedKeysExpr = entries.find(([k]) => k === 'selectedKeys')?.[1]
-      const defaultActiveKey = entries.find(([k]) => k === 'defaultActiveKey')?.[1]
+      const defaultSelectedKeys = entries.find(([k]) => k === 'defaultSelectedKeys')?.[1]
       const nmPs: string[] = []
       if (selectedKeysExpr) nmPs.push(`selectedKeys={${selectedKeysExpr} as string[]}`)
-      if (defaultActiveKey) nmPs.push(`defaultActiveKey={${defaultActiveKey}}`)
-      return `${pad}<HNavMenu items={${itemsExpr} as { value: string; label: string; icon?: string; children?: { value: string; label: string }[] }[]}${nmPs.length > 0 ? ' ' + nmPs.join(' ') : ''} />`
+      if (defaultSelectedKeys) nmPs.push(`defaultSelectedKeys={${defaultSelectedKeys} as string[]}`)
+      const nmExtra = buildPropString(entries.filter(([k]) => !['items', 'selectedKeys', 'defaultSelectedKeys'].includes(k)))
+      return `${pad}<HNavMenu items={${itemsExpr} as { value: string; label: string; icon?: string; children?: { value: string; label: string }[] }[]}${nmPs.length > 0 ? ' ' + nmPs.join(' ') : ''}${nmExtra} />`
     }
 
     // ── Fallback ────────────────────────────────────────────

@@ -10,8 +10,9 @@
     {
       "name": "a2ui",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["vite", "packages/a2ui", "--port", "5200"],
-      "port": 5200
+      "runtimeArgs": ["vite", "packages/a2ui"],
+      "port": 5200,
+      "autoPort": true
     }
   ]
 }
